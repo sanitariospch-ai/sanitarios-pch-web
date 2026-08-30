@@ -4,41 +4,65 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sanitarios PCH | Productos</title>
-  <meta name="description" content="Productos de Sanitarios PCH. Comprá online a través de Mercado Libre.">
+  <meta name="description" content="Productos para baño, cocina y lavadero de Sanitarios PCH. Comprá online a través de Mercado Libre.">
   <link rel="icon" href="favicon.png">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <svg style="display:none" aria-hidden="true">
+    <symbol id="icon-whatsapp" viewBox="0 0 24 24">
+      <path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.77.46 3.45 1.32 4.94L2 22l5.25-1.38a9.86 9.86 0 0 0 4.79 1.22h.01c5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2Zm0 1.67c2.19 0 4.25.85 5.8 2.4a8.15 8.15 0 0 1 2.4 5.81c0 4.53-3.68 8.21-8.2 8.21a8.2 8.2 0 0 1-4.18-1.14l-.3-.18-3.12.82.83-3.04-.2-.31a8.15 8.15 0 0 1-1.26-4.37c0-4.53 3.69-8.2 8.23-8.2Zm-4.5 4.4c-.16 0-.42.06-.64.31-.22.25-.85.83-.85 2.03 0 1.2.87 2.35.99 2.51.12.16 1.7 2.72 4.19 3.71 2.07.82 2.49.66 2.94.62.45-.04 1.45-.59 1.65-1.16.2-.57.2-1.06.14-1.16-.06-.1-.22-.16-.46-.28-.24-.12-1.45-.72-1.68-.8-.22-.08-.39-.12-.55.12-.16.24-.63.8-.78.96-.14.16-.28.18-.52.06-.24-.12-1.02-.38-1.94-1.2-.72-.64-1.2-1.44-1.34-1.68-.14-.24-.02-.37.11-.49.11-.11.24-.28.36-.42.12-.14.16-.24.24-.4.08-.16.04-.3-.02-.42-.06-.12-.55-1.34-.76-1.83-.2-.48-.4-.42-.55-.42Z"/>
+    </symbol>
+  </svg>
+ 
   <header class="header">
     <div class="container nav">
       <div class="logo">
         <img class="logo-mark" src="logo.png" alt="Sanitarios PCH">
         <div>
           <strong>Sanitarios PCH</strong>
-          <span>Baño · Hogar · Accesorios</span>
+          <span>Baño · Cocina · Lavadero</span>
         </div>
       </div>
       <a class="ml-store" href="#" id="storeLink" target="_blank" rel="noopener">Ver tienda en Mercado Libre ↗</a>
     </div>
   </header>
-
+ 
   <main>
     <section class="hero">
       <div class="container hero-content">
         <div>
           <span class="eyebrow">SANITARIOS PCH</span>
-          <h1>Todo para tu baño,<br><em>en un solo lugar.</em></h1>
+          <h1>Todo para tu baño, cocina<br>y lavadero, <em>en un solo lugar.</em></h1>
           <p>Encontrá nuestros productos y comprá de forma segura directamente desde Mercado Libre.</p>
           <a href="#productos" class="primary-btn">Ver productos</a>
         </div>
-        <div class="hero-card">
-          <span>🛒</span>
-          <b>Comprá en Mercado Libre</b>
-          <small>Publicaciones, pagos y envíos gestionados por Mercado Libre.</small>
+        <div class="hero-cards">
+          <a class="hero-card" href="#" id="heroStoreLink" target="_blank" rel="noopener">
+            <span class="hc-icon">🛒</span>
+            <span>
+              <b>Comprá en Mercado Libre</b>
+              <small>Publicaciones, pagos y envíos gestionados por Mercado Libre.</small>
+            </span>
+          </a>
+          <a class="hero-card" href="#" id="heroWhatsappQuote" target="_blank" rel="noopener">
+            <span class="hc-icon hc-icon--wa"><svg width="18" height="18" fill="currentColor" aria-hidden="true"><use href="#icon-whatsapp"></use></svg></span>
+            <span>
+              <b>Pedí tu presupuesto por WhatsApp</b>
+              <small>Consultá precios y coordiná tu compra. Envíos a todo el país.</small>
+            </span>
+          </a>
+          <a class="hero-card" href="#" id="heroWhatsappListing" target="_blank" rel="noopener">
+            <span class="hc-icon hc-icon--wa"><svg width="18" height="18" fill="currentColor" aria-hidden="true"><use href="#icon-whatsapp"></use></svg></span>
+            <span>
+              <b>¿No encontrás tu producto?</b>
+              <small>Escribinos por WhatsApp y te armamos la publicación en Mercado Libre.</small>
+            </span>
+          </a>
         </div>
       </div>
     </section>
-
+ 
     <section class="catalog container" id="productos">
       <div class="section-top">
         <div>
@@ -49,13 +73,13 @@
           <input id="search" type="search" placeholder="Buscar producto..." aria-label="Buscar producto">
         </div>
       </div>
-
+ 
       <div class="categories" id="categories"></div>
       <div class="product-grid" id="productGrid"></div>
       <div class="empty" id="empty" hidden>No encontramos productos con esa búsqueda.</div>
     </section>
   </main>
-
+ 
   <div class="modal" id="productModal" hidden>
     <div class="modal-overlay" id="modalOverlay"></div>
     <div class="modal-content">
@@ -75,19 +99,19 @@
         <p class="modal-desc" id="modalDescripcion"></p>
         <div class="product-actions">
           <a class="buy" id="modalComprar" href="#" target="_blank" rel="noopener">Comprar en Mercado Libre</a>
-          <a class="consult" id="modalConsultar" href="#" target="_blank" rel="noopener" title="Consultar por WhatsApp">💬</a>
+          <a class="consult" id="modalConsultar" href="#" target="_blank" rel="noopener" title="Consultar por WhatsApp"><svg width="20" height="20" fill="currentColor" aria-hidden="true"><use href="#icon-whatsapp"></use></svg></a>
         </div>
       </div>
     </div>
   </div>
-
-  <a class="whatsapp" id="whatsapp" href="#" target="_blank" rel="noopener" aria-label="Consultar por WhatsApp">💬</a>
-
+ 
+  <a class="whatsapp" id="whatsapp" href="#" target="_blank" rel="noopener" aria-label="Consultar por WhatsApp"><svg width="26" height="26" fill="currentColor" aria-hidden="true"><use href="#icon-whatsapp"></use></svg></a>
+ 
   <footer>
     <div class="container footer-inner">
       <div>
         <strong>Sanitarios PCH</strong>
-        <p>Productos para baño y hogar.</p>
+        <p>Productos para baño, cocina y lavadero.</p>
       </div>
       <div class="footer-links">
         <a href="#" id="footerStore" target="_blank" rel="noopener">Mercado Libre</a>
@@ -95,8 +119,9 @@
       </div>
     </div>
   </footer>
-
+ 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
   <script src="script.js"></script>
 </body>
 </html>
+ 
