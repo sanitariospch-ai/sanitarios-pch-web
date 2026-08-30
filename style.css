@@ -54,10 +54,17 @@ body {
 h1 { font-size: clamp(38px, 5.4vw, 66px); line-height: 1.04; letter-spacing:-2.5px; margin: 16px 0 22px; text-wrap: balance; }
 h1 em { font-family:"Playfair Display", Georgia, serif; font-weight:600; }
 .hero p { max-width: 610px; color:#596366; font-size:18px; line-height:1.6; }
+.hero-actions { display:flex; flex-wrap:wrap; gap:12px; margin-top:18px; }
 .primary-btn {
-  display:inline-block; margin-top:18px; padding:14px 22px; border-radius:10px;
+  display:inline-block; padding:14px 22px; border-radius:10px;
   background:#183b3f; color:#fff; text-decoration:none; font-weight:700;
 }
+.secondary-btn {
+  display:inline-block; padding:14px 22px; border-radius:10px;
+  background:transparent; color:#183b3f; text-decoration:none; font-weight:700;
+  border:1.5px solid #183b3f; transition:background .15s ease, color .15s ease;
+}
+.secondary-btn:hover { background:#183b3f; color:#fff; }
 
 .hero-cards { display:flex; flex-direction:column; gap:12px; }
 .hero-card {
