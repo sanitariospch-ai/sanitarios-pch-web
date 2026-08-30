@@ -54,13 +54,24 @@ async function cargarProductos() {
 
     PRODUCTOS = parsed.data
       .filter(fila => debeMostrarse(fila["Mostrar"]) && (fila["Nombre Publicacion"] || "").trim())
-      .map(fila => ({
-        nombre: (fila["Nombre Publicacion"] || "").trim(),
-        precio: parsePrecio(fila["Precio Web"]),
-        categoria: (fila["Categoria"] || "Otros").trim(),
-        imagen: (fila["Foto"] || "https://placehold.co/700x700/e9efec/183b3f?text=Sin+foto").trim(),
-        link: (fila["Link Mercado Libre"] || CONFIG.tiendaMercadoLibre).trim(),
-      }));
+      .map(fila => {
+        const principal = (fila["Foto"] || "").trim();
+        const extras = [fila["Foto 2"], fila["Foto 3"], fila["Foto 4"]]
+          .map(f => (f || "").trim())
+          .filter(Boolean);
+        const fotos = [principal, ...extras].filter(Boolean);
+        if (fotos.length === 0) fotos.push("https://placehold.co/700x700/e9efec/183b3f?text=Sin+foto");
+
+        return {
+          nombre: (fila["Nombre Publicacion"] || "").trim(),
+          precio: parsePrecio(fila["Precio Web"]),
+          categoria: (fila["Categoria"] || "Otros").trim(),
+          descripcion: (fila["Descripcion"] || "").trim(),
+          fotos,
+          imagen: fotos[0],
+          link: (fila["Link Mercado Libre"] || CONFIG.tiendaMercadoLibre).trim(),
+        };
+      });
 
     renderCategories();
     renderProducts();
@@ -108,23 +119,94 @@ function renderProducts() {
     return coincideCategoria && coincideBusqueda;
   });
 
-  document.getElementById("productGrid").innerHTML = productos.map(p => `
-    <article class="product">
+  productosVisibles = productos;
+
+  document.getElementById("productGrid").innerHTML = productos.map((p, i) => `
+    <article class="product" data-index="${i}">
       <img class="product-img" src="${p.imagen}" alt="${p.nombre}" loading="lazy">
       <div class="product-body">
         <div class="product-category">${p.categoria}</div>
         <h3>${p.nombre}</h3>
         <div class="price">${money.format(p.precio)}</div>
         <div class="product-actions">
-          <a class="buy" href="${p.link}" target="_blank" rel="noopener">Comprar</a>
-          <a class="consult" href="${whatsappLink(p)}" target="_blank" rel="noopener" title="Consultar por WhatsApp">💬</a>
+          <a class="buy" href="${p.link}" target="_blank" rel="noopener" onclick="event.stopPropagation()">Comprar</a>
+          <a class="consult" href="${whatsappLink(p)}" target="_blank" rel="noopener" title="Consultar por WhatsApp" onclick="event.stopPropagation()">💬</a>
         </div>
       </div>
     </article>
   `).join("");
 
   document.getElementById("empty").hidden = productos.length !== 0;
+
+  document.querySelectorAll(".product").forEach(card => {
+    card.addEventListener("click", () => abrirFicha(productosVisibles[Number(card.dataset.index)]));
+  });
 }
+
+// ---------- Ficha de producto (modal con varias fotos) ----------
+let productosVisibles = [];
+let fichaFotos = [];
+let fichaIndice = 0;
+
+function abrirFicha(p) {
+  fichaFotos = p.fotos;
+  fichaIndice = 0;
+
+  document.getElementById("modalCategoria").textContent = p.categoria;
+  document.getElementById("modalNombre").textContent = p.nombre;
+  document.getElementById("modalPrecio").textContent = money.format(p.precio);
+  document.getElementById("modalDescripcion").textContent = p.descripcion || "";
+  document.getElementById("modalDescripcion").hidden = !p.descripcion;
+  document.getElementById("modalComprar").href = p.link;
+  document.getElementById("modalConsultar").href = whatsappLink(p);
+
+  renderFichaFoto();
+  document.getElementById("modalDots").innerHTML = fichaFotos.map((_, i) =>
+    `<button class="dot ${i === fichaIndice ? "active" : ""}" data-i="${i}" aria-label="Foto ${i + 1}"></button>`
+  ).join("");
+  document.getElementById("modalDots").hidden = fichaFotos.length <= 1;
+  document.querySelector(".modal-arrows").hidden = fichaFotos.length <= 1;
+
+  document.querySelectorAll("#modalDots .dot").forEach(dot => {
+    dot.addEventListener("click", () => { fichaIndice = Number(dot.dataset.i); renderFichaFoto(); });
+  });
+
+  document.getElementById("productModal").hidden = false;
+  document.body.style.overflow = "hidden";
+}
+
+function renderFichaFoto() {
+  document.getElementById("modalImg").src = fichaFotos[fichaIndice];
+  document.querySelectorAll("#modalDots .dot").forEach((dot, i) => {
+    dot.classList.toggle("active", i === fichaIndice);
+  });
+}
+
+function fichaSiguiente() {
+  fichaIndice = (fichaIndice + 1) % fichaFotos.length;
+  renderFichaFoto();
+}
+
+function fichaAnterior() {
+  fichaIndice = (fichaIndice - 1 + fichaFotos.length) % fichaFotos.length;
+  renderFichaFoto();
+}
+
+function cerrarFicha() {
+  document.getElementById("productModal").hidden = true;
+  document.body.style.overflow = "";
+}
+
+document.getElementById("modalClose").addEventListener("click", cerrarFicha);
+document.getElementById("modalOverlay").addEventListener("click", cerrarFicha);
+document.getElementById("modalNext").addEventListener("click", fichaSiguiente);
+document.getElementById("modalPrev").addEventListener("click", fichaAnterior);
+document.addEventListener("keydown", (e) => {
+  if (document.getElementById("productModal").hidden) return;
+  if (e.key === "Escape") cerrarFicha();
+  if (e.key === "ArrowRight") fichaSiguiente();
+  if (e.key === "ArrowLeft") fichaAnterior();
+});
 
 document.getElementById("search").addEventListener("input", renderProducts);
 

@@ -55,6 +55,31 @@
     </section>
   </main>
 
+  <div class="modal" id="productModal" hidden>
+    <div class="modal-overlay" id="modalOverlay"></div>
+    <div class="modal-content">
+      <button class="modal-close" id="modalClose" aria-label="Cerrar">✕</button>
+      <div class="modal-gallery">
+        <img id="modalImg" src="" alt="">
+        <div class="modal-arrows">
+          <button id="modalPrev" aria-label="Foto anterior">‹</button>
+          <button id="modalNext" aria-label="Foto siguiente">›</button>
+        </div>
+        <div class="modal-dots" id="modalDots"></div>
+      </div>
+      <div class="modal-info">
+        <div class="product-category" id="modalCategoria"></div>
+        <h3 id="modalNombre"></h3>
+        <div class="price" id="modalPrecio"></div>
+        <p class="modal-desc" id="modalDescripcion"></p>
+        <div class="product-actions">
+          <a class="buy" id="modalComprar" href="#" target="_blank" rel="noopener">Comprar en Mercado Libre</a>
+          <a class="consult" id="modalConsultar" href="#" target="_blank" rel="noopener" title="Consultar por WhatsApp">💬</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <a class="whatsapp" id="whatsapp" href="#" target="_blank" rel="noopener" aria-label="Consultar por WhatsApp">💬</a>
 
   <footer>
