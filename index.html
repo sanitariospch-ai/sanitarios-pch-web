@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sanitarios PCH | Productos</title>
+  <meta name="description" content="Productos de Sanitarios PCH. Comprá online a través de Mercado Libre.">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="header">
+    <div class="container nav">
+      <div class="logo">
+        <div class="logo-mark">PCH</div>
+        <div>
+          <strong>Sanitarios PCH</strong>
+          <span>Baño · Hogar · Accesorios</span>
+        </div>
+      </div>
+      <a class="ml-store" href="#" id="storeLink" target="_blank" rel="noopener">Ver tienda en Mercado Libre ↗</a>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="container hero-content">
+        <div>
+          <span class="eyebrow">SANITARIOS PCH</span>
+          <h1>Todo para tu baño,<br><em>en un solo lugar.</em></h1>
+          <p>Encontrá nuestros productos y comprá de forma segura directamente desde Mercado Libre.</p>
+          <a href="#productos" class="primary-btn">Ver productos</a>
+        </div>
+        <div class="hero-card">
+          <span>🛒</span>
+          <b>Comprá en Mercado Libre</b>
+          <small>Publicaciones, pagos y envíos gestionados por Mercado Libre.</small>
+        </div>
+      </div>
+    </section>
+
+    <section class="catalog container" id="productos">
+      <div class="section-top">
+        <div>
+          <span class="eyebrow">CATÁLOGO</span>
+          <h2>Nuestros productos</h2>
+        </div>
+        <div class="search-wrap">
+          <input id="search" type="search" placeholder="Buscar producto..." aria-label="Buscar producto">
+        </div>
+      </div>
+
+      <div class="categories" id="categories"></div>
+      <div class="product-grid" id="productGrid"></div>
+      <div class="empty" id="empty" hidden>No encontramos productos con esa búsqueda.</div>
+    </section>
+  </main>
+
+  <a class="whatsapp" id="whatsapp" href="#" target="_blank" rel="noopener" aria-label="Consultar por WhatsApp">💬</a>
+
+  <footer>
+    <div class="container footer-inner">
+      <div>
+        <strong>Sanitarios PCH</strong>
+        <p>Productos para baño y hogar.</p>
+      </div>
+      <div class="footer-links">
+        <a href="#" id="footerStore" target="_blank" rel="noopener">Mercado Libre</a>
+        <a href="#" id="footerWhatsapp" target="_blank" rel="noopener">WhatsApp</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
