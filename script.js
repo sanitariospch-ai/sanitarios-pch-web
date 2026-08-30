@@ -5,7 +5,7 @@
 
 const CONFIG = {
   tiendaMercadoLibre: "https://www.mercadolibre.com.ar/pagina/sanitariosparquechacabuco",
-  whatsapp: "5491100000000", // Cambiar por tu número. Ej: 5491123456789
+  whatsapp: "5491126910527", // Cambiar por tu número. Ej: 5491123456789
 
   // Link CSV publicado de tu Google Sheets (Archivo > Compartir > Publicar en la web > CSV).
   // Si cambiás de planilla o de pestaña, solo hay que reemplazar este link.
