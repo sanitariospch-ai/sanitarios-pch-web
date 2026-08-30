@@ -98,6 +98,7 @@ h2 { font-size:38px; letter-spacing:-1.5px; margin:8px 0 0; }
 .modal-overlay {
   position: absolute; inset: 0; background: rgba(24,32,38,.6);
 }
+.modal[hidden] { display: none; }
 .modal-content {
   position: relative; background: #fff; border-radius: 20px; overflow: hidden;
   width: min(880px, 100%); max-height: 90vh; overflow-y: auto;
