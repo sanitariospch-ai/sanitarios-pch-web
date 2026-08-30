@@ -219,5 +219,6 @@ document.getElementById("footerWhatsapp").href = `https://wa.me/${CONFIG.whatsap
 document.getElementById("heroStoreLink").href = CONFIG.tiendaMercadoLibre;
 document.getElementById("heroWhatsappQuote").href = `https://wa.me/${CONFIG.whatsapp}?text=${encodeURIComponent("Hola Sanitarios PCH, quiero pedir un presupuesto.")}`;
 document.getElementById("heroWhatsappListing").href = `https://wa.me/${CONFIG.whatsapp}?text=${encodeURIComponent("Hola Sanitarios PCH, quiero pedirte que me ayudes a armar una publicación en Mercado Libre.")}`;
+document.getElementById("infoWhatsapp").href = `https://wa.me/${CONFIG.whatsapp}?text=${encodeURIComponent("Hola Sanitarios PCH, tengo una consulta.")}`;
  
 cargarProductos();
