@@ -14,6 +14,8 @@ const CONFIG = {
 
 // Los productos se cargan automáticamente desde CONFIG.sheetCSV (ver cargarProductos()).
 // Columnas esperadas en la planilla: Codigo, Nombre Publicacion, Precio Web, Categoria, Foto, Foto 2, Foto 3, Foto 4, Descripcion, Link Mercado Libre, Mostrar
+// La columna "Mostrar" acepta 3 valores: Si (se ve normal), No (no aparece en la web) y Sin Stock
+// (aparece igual pero con la etiqueta "Sin stock" y el WhatsApp pregunta por el reingreso).
 const WHATSAPP_ICON_SVG = '<svg width="18" height="18" fill="currentColor" aria-hidden="true"><use href="#icon-whatsapp"></use></svg>';
 
 // Cuántos productos se muestran antes de que aparezca "Ver más productos".
@@ -40,11 +42,14 @@ function parsePrecio(texto) {
   return isNaN(num) ? 0 : num;
 }
 
-// Interpreta la columna "Mostrar" como sí/no. Si está vacía, se muestra igual.
-function debeMostrarse(valor) {
-  if (valor === undefined || valor === null || String(valor).trim() === "") return true;
+// Interpreta la columna "Mostrar": "si" (o vacío) muestra normal, "no" la oculta
+// por completo y "sin stock" la muestra marcada como sin stock.
+function estadoPublicacion(valor) {
+  if (valor === undefined || valor === null || String(valor).trim() === "") return "si";
   const v = String(valor).trim().toLowerCase();
-  return ["si", "sí", "yes", "true", "1", "x"].includes(v);
+  if (["sin stock", "sin-stock", "sinstock"].includes(v)) return "sin_stock";
+  if (["si", "sí", "yes", "true", "1", "x"].includes(v)) return "si";
+  return "no";
 }
 
 // Descarga el CSV publicado de Google Sheets y lo transforma en la lista de productos.
@@ -60,7 +65,7 @@ async function cargarProductos() {
     const parsed = Papa.parse(texto, { header: true, skipEmptyLines: true });
 
     PRODUCTOS = parsed.data
-      .filter(fila => debeMostrarse(fila["Mostrar"]) && (fila["Nombre Publicacion"] || "").trim())
+      .filter(fila => estadoPublicacion(fila["Mostrar"]) !== "no" && (fila["Nombre Publicacion"] || "").trim())
       .map(fila => {
         const principal = (fila["Foto"] || "").trim();
         const extras = [fila["Foto 2"], fila["Foto 3"], fila["Foto 4"]]
@@ -77,6 +82,7 @@ async function cargarProductos() {
           fotos,
           imagen: fotos[0],
           link: (fila["Link Mercado Libre"] || CONFIG.tiendaMercadoLibre).trim(),
+          sinStock: estadoPublicacion(fila["Mostrar"]) === "sin_stock",
         };
       });
 
@@ -90,10 +96,10 @@ async function cargarProductos() {
 }
 
 function whatsappLink(producto) {
-  const text = encodeURIComponent(
-    `Hola Sanitarios PCH, quiero consultar por: ${producto.nombre}`
-  );
-  return `https://wa.me/${CONFIG.whatsapp}?text=${text}`;
+  const mensaje = producto.sinStock
+    ? `Hola Sanitarios PCH, quiero consultar cuándo van a tener nuevo stock de: ${producto.nombre}`
+    : `Hola Sanitarios PCH, quiero consultar por: ${producto.nombre}`;
+  return `https://wa.me/${CONFIG.whatsapp}?text=${encodeURIComponent(mensaje)}`;
 }
 
 function renderCategories() {
@@ -132,15 +138,18 @@ function renderProducts() {
   const productosAMostrar = productosFiltrados.slice(0, productosVisiblesCount);
 
   document.getElementById("productGrid").innerHTML = productosAMostrar.map((p, i) => `
-    <article class="product" data-index="${i}">
-      <img class="product-img" src="${p.imagen}" alt="${p.nombre}" loading="lazy">
+    <article class="product ${p.sinStock ? "sin-stock" : ""}" data-index="${i}">
+      <div class="product-thumb">
+        ${p.sinStock ? `<span class="stock-badge">Sin stock</span>` : ""}
+        <img class="product-img" src="${p.imagen}" alt="${p.nombre}" loading="lazy">
+      </div>
       <div class="product-body">
         <div class="product-category">${p.categoria}</div>
         <h3>${p.nombre}</h3>
         <div class="price">${money.format(p.precio)}</div>
         <div class="product-actions">
           <a class="buy" href="${p.link}" target="_blank" rel="noopener" onclick="event.stopPropagation()">Comprar</a>
-          <a class="consult" href="${whatsappLink(p)}" target="_blank" rel="noopener" title="Consultar por WhatsApp" onclick="event.stopPropagation()">${WHATSAPP_ICON_SVG}</a>
+          <a class="consult" href="${whatsappLink(p)}" target="_blank" rel="noopener" title="${p.sinStock ? "Consultar por nuevo stock" : "Consultar por WhatsApp"}" onclick="event.stopPropagation()">${WHATSAPP_ICON_SVG}</a>
         </div>
       </div>
     </article>
@@ -170,6 +179,7 @@ function abrirFicha(p) {
   document.getElementById("modalDescripcion").hidden = !p.descripcion;
   document.getElementById("modalComprar").href = p.link;
   document.getElementById("modalConsultar").href = whatsappLink(p);
+  document.getElementById("modalStockBadge").hidden = !p.sinStock;
 
   renderFichaFoto();
   document.getElementById("modalDots").innerHTML = fichaFotos.map((_, i) =>
