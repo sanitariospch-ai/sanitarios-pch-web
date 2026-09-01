@@ -21,7 +21,9 @@ Columnas de la planilla:
 - Foto 2, Foto 3, Foto 4 (opcionales — para la galería de fotos del producto)
 - Descripcion (opcional — texto que se ve al abrir la ficha del producto)
 - Link Mercado Libre
-- Mostrar (si / no — para ocultar un producto sin borrarlo)
+- Mostrar (Si / No / Sin Stock — Si lo muestra normal, No lo oculta sin borrarlo,
+  Sin Stock lo muestra igual con la etiqueta "Sin stock" y cambia el mensaje de
+  WhatsApp para que el cliente consulte cuándo va a haber nuevo stock)
 
 Al hacer clic en un producto se abre una ficha con todas sus fotos (se navega con flechas o puntitos) y la descripción.
 
