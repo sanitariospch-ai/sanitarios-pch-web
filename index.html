@@ -31,40 +31,41 @@
 
   <main>
     <section class="hero">
-      <div class="container hero-content">
-        <div>
-          <h1>Todo para tu baño, cocina<br>y lavadero, <em>en un solo lugar.</em></h1>
-          <p>Encontrá nuestros productos y comprá de forma segura directamente desde Mercado Libre.</p>
-          <div class="hero-actions">
-            <a href="#productos" class="primary-btn">Ver productos</a>
-            <a href="#info" class="secondary-btn">Cómo comprar</a>
-          </div>
-        </div>
-        <div class="hero-cards">
-          <a class="hero-card" href="#" id="heroStoreLink" target="_blank" rel="noopener">
-            <span class="hc-icon">🛒</span>
-            <span>
-              <b>Comprá en Mercado Libre</b>
-              <small>Publicaciones, pagos y envíos gestionados por Mercado Libre.</small>
-            </span>
-          </a>
-          <a class="hero-card" href="#" id="heroWhatsappQuote" target="_blank" rel="noopener">
-            <span class="hc-icon hc-icon--wa"><svg width="18" height="18" fill="currentColor" aria-hidden="true"><use href="#icon-whatsapp"></use></svg></span>
-            <span>
-              <b>Pedí tu presupuesto por WhatsApp</b>
-              <small>Consultá precios y coordiná tu compra. Envíos a todo el país.</small>
-            </span>
-          </a>
-          <a class="hero-card" href="#" id="heroWhatsappListing" target="_blank" rel="noopener">
-            <span class="hc-icon hc-icon--wa"><svg width="18" height="18" fill="currentColor" aria-hidden="true"><use href="#icon-whatsapp"></use></svg></span>
-            <span>
-              <b>¿No encontrás tu producto?</b>
-              <small>Escribinos por WhatsApp y te armamos la publicación en Mercado Libre.</small>
-            </span>
-          </a>
+      <div class="container hero-inner">
+        <h1>Todo para tu baño, cocina y lavadero</h1>
+        <p>Encontrá nuestros productos y comprá de forma segura directamente desde Mercado Libre.</p>
+        <div class="hero-actions">
+          <a href="#productos" class="primary-btn">Ver productos</a>
+          <a href="#info" class="secondary-btn">Cómo comprar</a>
         </div>
       </div>
     </section>
+
+    <div class="trust-strip">
+      <div class="container trust-strip-inner">
+        <a class="trust-item" href="#" id="heroStoreLink" target="_blank" rel="noopener">
+          <span class="hc-icon">🛒</span>
+          <span>
+            <b>Comprá en Mercado Libre</b>
+            <small>Publicaciones, pagos y envíos gestionados por Mercado Libre.</small>
+          </span>
+        </a>
+        <a class="trust-item" href="#" id="heroWhatsappQuote" target="_blank" rel="noopener">
+          <span class="hc-icon hc-icon--wa"><svg width="18" height="18" fill="currentColor" aria-hidden="true"><use href="#icon-whatsapp"></use></svg></span>
+          <span>
+            <b>Pedí tu presupuesto por WhatsApp</b>
+            <small>Consultá precios y coordiná tu compra. Envíos a todo el país.</small>
+          </span>
+        </a>
+        <a class="trust-item" href="#" id="heroWhatsappListing" target="_blank" rel="noopener">
+          <span class="hc-icon hc-icon--wa"><svg width="18" height="18" fill="currentColor" aria-hidden="true"><use href="#icon-whatsapp"></use></svg></span>
+          <span>
+            <b>¿No encontrás tu producto?</b>
+            <small>Escribinos por WhatsApp y te armamos la publicación en Mercado Libre.</small>
+          </span>
+        </a>
+      </div>
+    </div>
 
     <section class="catalog container" id="productos">
       <div class="section-top">
@@ -114,7 +115,7 @@
   <a class="whatsapp" id="whatsapp" href="#" target="_blank" rel="noopener" aria-label="Consultar por WhatsApp"><svg width="26" height="26" fill="currentColor" aria-hidden="true"><use href="#icon-whatsapp"></use></svg></a>
 
   <section class="info container" id="info">
-    <span class="eyebrow">CÓMO COMPRAR</span>
+    <h2>Cómo comprar</h2>
     <div class="info-grid">
       <div class="info-item">
         <span class="hc-icon">🧾</span>
@@ -162,15 +163,26 @@
   </section>
 
   <footer>
-    <div class="container footer-inner">
-      <div>
+    <div class="container footer-grid">
+      <div class="footer-brand">
         <strong>Sanitarios PCH</strong>
-        <p>Productos para baño, cocina y lavadero.</p>
+        <p>Productos para baño, cocina y lavadero. Envíos a todo el país.</p>
       </div>
-      <div class="footer-links">
+      <div class="footer-col">
+        <span class="footer-col-title">Comprar</span>
+        <a href="#productos">Catálogo</a>
         <a href="#" id="footerStore" target="_blank" rel="noopener">Mercado Libre</a>
-        <a href="#" id="footerWhatsapp" target="_blank" rel="noopener">WhatsApp</a>
+        <a href="#info">Cómo comprar</a>
       </div>
+      <div class="footer-col">
+        <span class="footer-col-title">Contacto</span>
+        <a href="#" id="footerWhatsapp" target="_blank" rel="noopener">WhatsApp</a>
+        <a href="https://www.google.com/maps/search/?api=1&query=Cachimayo+1784%2C+Parque+Chacabuco%2C+CABA" target="_blank" rel="noopener">Cachimayo 1784, CABA</a>
+      </div>
+    </div>
+    <div class="container footer-bottom">
+      <span>© Sanitarios PCH</span>
+      <span>Factura A y B · Mercado Pago, transferencia y efectivo</span>
     </div>
   </footer>
 
