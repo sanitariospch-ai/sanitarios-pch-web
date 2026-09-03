@@ -14,6 +14,8 @@ Los productos ya NO se cargan a mano en el código: se traen automáticamente de
 
 Columnas de la planilla:
 
+- Codigo (opcional, pero recomendado — identifica al producto de forma única
+  para el carrito; si lo dejás vacío se usa el nombre)
 - Nombre Publicacion
 - Precio Web
 - Categoria
@@ -39,27 +41,59 @@ solo con las categorías que uses en la columna "Categoria" de tu planilla —
 no hay que tocar nada), Contacto y Mayoristas (los dos últimos abren WhatsApp
 con un mensaje distinto cada uno, editable en `script.js`).
 
+## Carrito (3er canal de venta)
+
+Además de comprar por Mercado Libre o consultar por WhatsApp, cada producto
+tiene un botón de carrito (🛒) para armar un pedido en la web. El botón
+"Comprá mediante la web" de la franja de arriba del Home lleva al catálogo
+para empezar. El carrito:
+
+- Se guarda en el navegador de cada visitante (localStorage), así que si
+  cierran la página y vuelven más tarde lo siguen teniendo.
+- No procesa pagos ni envíos: al tocar "Finalizar compra por WhatsApp" arma
+  un mensaje con el detalle del pedido (productos, cantidades y total) y lo
+  manda a tu WhatsApp para que coordines la compra con el cliente ahí.
+- No se ofrece para productos "Sin Stock" (no tendría sentido armar un
+  pedido de algo que no hay).
+
+No hay nada que configurar para que funcione — ya usa `CONFIG.whatsapp` y
+los datos de cada producto de la planilla.
+
 ## Cómo cargar videos en el Home (sección "Videos")
 
 La sección "Videos" del Home queda oculta hasta que cargues al menos un
-video en `CONFIG.clips`, en `script.js`. Para cada video agregá un objeto
-a la lista con estos campos:
+video en `CONFIG.clips`, en `script.js`. Se muestra como un video grande
+con pestañas de categoría arriba y, si hay más de un video en esa
+categoría, una tira de miniaturas abajo para elegir otro. Para cada video
+agregá un objeto a la lista con estos campos:
 
-- `titulo` y `texto`: el texto que se ve debajo del video.
-- `poster`: una imagen de portada (obligatoria si no ponés `video`).
+- `titulo` y `texto`: el texto que se ve al lado del video grande.
+- `categoria` (opcional): agrupa los videos en pestañas (por ejemplo
+  "Aspiradoras", "Mochilas"). Si la dejás vacía, todos los videos caen en
+  una única pestaña "Videos" (no se muestran pestañas con un solo grupo).
+- `poster`: una imagen de portada (obligatoria si no ponés `video`; se usa
+  también como miniatura en la tira de abajo).
 - `video` (opcional): link directo a un archivo .mp4. Si lo completás, el
-  video se reproduce en la tarjeta (se pausa/reproduce solo al pasar el
-  mouse). Si lo dejás vacío, la tarjeta muestra la imagen de `poster` y
-  al hacer clic lleva al link de `link`.
-- `link` (opcional): a dónde lleva la tarjeta al hacer clic (por ejemplo,
-  la publicación en Mercado Libre). Si lo dejás vacío, usa
+  video grande se reproduce con controles. Si lo dejás vacío, se muestra
+  la imagen de `poster` y al hacer clic lleva al link de `link`.
+- `link` (opcional): a dónde lleva el botón "Ver más" (por ejemplo, la
+  publicación en Mercado Libre). Si lo dejás vacío, usa
   `CONFIG.tiendaMercadoLibre`.
 
-Ejemplo:
+Ejemplo con dos categorías:
 
 ```js
 clips: [
   { titulo: "Aspiradora SWIFT", texto: "Limpiá la casa o el auto en minutos.",
-    poster: "https://.../portada.jpg", video: "https://.../clip.mp4", link: "" },
+    categoria: "Aspiradoras", poster: "https://.../portada.jpg", video: "https://.../clip.mp4", link: "" },
+  { titulo: "Mochila Táctica", texto: "Resistente al agua.",
+    categoria: "Mochilas", poster: "https://.../portada2.jpg", video: "", link: "https://..." },
 ],
 ```
+
+### Cómo mandarme los videos
+
+Subilos acá mismo en el chat (los archivos .mp4) y los agrego. Si pesan
+mucho (más de ~20-25 MB cada uno) avisame, porque conviene comprimirlos o
+subirlos a un hosting de video aparte para no inflar el repositorio y que
+la página cargue rápido.
