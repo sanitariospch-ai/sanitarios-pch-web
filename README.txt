@@ -76,41 +76,61 @@ para empezar. El carrito:
 No hay nada más que configurar para que funcione — ya usa `CONFIG.whatsapp`
 y los datos de cada producto de la planilla.
 
-## Cómo cargar videos en el Home (sección "Videos")
+## Destacados (franja arriba de "Videos")
 
-La sección "Videos" del Home queda oculta hasta que cargues al menos un
-video en `CONFIG.clips`, en `script.js`. Se muestra como un video grande
-con pestañas de categoría arriba y, si hay más de un video en esa
-categoría, una tira de miniaturas abajo para elegir otro. Para cada video
-agregá un objeto a la lista con estos campos:
+Agregá una columna **"Destacado"** (Si / No) en tu planilla de productos.
+Los que tengan "Si" aparecen en una franja "Destacados" en el Home, arriba
+de la sección de Videos — pensada para mostrar los más vendidos o los que
+quieras resaltar. Si no marcás ninguno, la sección queda oculta sola.
 
-- `titulo` y `texto`: el texto que se ve al lado del video grande.
-- `categoria` (opcional): agrupa los videos en pestañas (por ejemplo
-  "Aspiradoras", "Mochilas"). Si la dejás vacía, todos los videos caen en
-  una única pestaña "Videos" (no se muestran pestañas con un solo grupo).
+## Videos en el Home (sección "Videos")
+
+Los primeros 7 videos ya están cargados (uno por categoría: Flexibles de
+Agua, Flexibles de Gas —con los dos que pediste unir en uno solo—,
+Desagües, Flotantes, Fuelles, Grampas y Sifones). Se guardan como archivos
+directamente en el repositorio, en la carpeta `videos/` (los .mp4) y
+`videos/posters/` (las imágenes de portada), y se referencian por su
+nombre de archivo en `CONFIG.clips` de `script.js` — no dependen de ningún
+link externo.
+
+Cada video ya viene recortado a formato cuadrado (1:1), acelerado 1.5x
+(a pedido tuyo, para que se vean más dinámicos) y comprimido para web.
+
+La sección queda oculta automáticamente si `CONFIG.clips` está vacío. Para
+agregar, sacar o editar un video, cada objeto de la lista tiene estos
+campos:
+
+- `hook` (opcional): la frase o pregunta corta arriba del título (por
+  ejemplo "¿SE TE ROMPIÓ LA MANGUERA DE AGUA?").
+- `titulo` y `texto`: el nombre del producto y una descripción breve.
+- `categoria` (opcional): agrupa los videos en pestañas. Si la dejás
+  vacía, todos los videos caen en una única pestaña "Videos" (no se
+  muestran pestañas con un solo grupo).
 - `poster`: una imagen de portada (obligatoria si no ponés `video`; se usa
-  también como miniatura en la tira de abajo).
-- `video` (opcional): link directo a un archivo .mp4. Si lo completás, el
-  video grande se reproduce con controles. Si lo dejás vacío, se muestra
-  la imagen de `poster` y al hacer clic lleva al link de `link`.
+  también como miniatura si hay más de un video en la misma categoría).
+- `video` (opcional): link a un archivo .mp4 — puede ser un archivo del
+  repo (`videos/nombre.mp4`) o un link externo. Si lo dejás vacío, se
+  muestra la imagen de `poster` y al hacer clic lleva al link de `link`.
 - `link` (opcional): a dónde lleva el botón "Ver más" (por ejemplo, la
   publicación en Mercado Libre). Si lo dejás vacío, usa
   `CONFIG.tiendaMercadoLibre`.
 
-Ejemplo con dos categorías:
+Ejemplo:
 
 ```js
 clips: [
-  { titulo: "Aspiradora SWIFT", texto: "Limpiá la casa o el auto en minutos.",
-    categoria: "Aspiradoras", poster: "https://.../portada.jpg", video: "https://.../clip.mp4", link: "" },
-  { titulo: "Mochila Táctica", texto: "Resistente al agua.",
-    categoria: "Mochilas", poster: "https://.../portada2.jpg", video: "", link: "https://..." },
+  { hook: "¿SE TE ROMPIÓ LA MANGUERA DE AGUA?", titulo: "Flexibles de agua Tecnoform",
+    texto: "Conexión de 1/2\" en distintos largos, en acero inoxidable premium.",
+    categoria: "Flexibles de Agua", poster: "videos/posters/flexibles-de-agua.jpg",
+    video: "videos/flexibles-de-agua.mp4" },
 ],
 ```
 
-### Cómo mandarme los videos
+### Si querés mandarme más videos
 
-Subilos acá mismo en el chat (los archivos .mp4) y los agrego. Si pesan
-mucho (más de ~20-25 MB cada uno) avisame, porque conviene comprimirlos o
-subirlos a un hosting de video aparte para no inflar el repositorio y que
-la página cargue rápido.
+Subilos a Google Drive y pasame el link de la carpeta (o el archivo
+individual). Con que cada uno pese menos de 10 MB los puedo bajar; si
+pesan más, comprimilos antes en HandBrake (preset "Fast 720p30" o "Very
+Fast 720p30", con calidad RF 26-28) — yo me encargo de recortarlos a
+cuadrado, unir los que vayan juntos en una categoría y acelerarlos si
+hace falta.

@@ -256,6 +256,7 @@ h2 { font-size:28px; letter-spacing:-0.5px; margin:0; }
 
 .product { cursor: pointer; }
 
+.destacados { padding: 0 0 56px; }
 .clips { padding: 0 0 64px; }
 .clips-tabs { display:flex; gap:9px; flex-wrap:wrap; margin-bottom:18px; }
 .clips-tab {
@@ -273,6 +274,7 @@ h2 { font-size:28px; letter-spacing:-0.5px; margin:0; }
 .clips-feature-media img, .clips-feature-media video { width:100%; height:100%; aspect-ratio:16/9; object-fit:cover; display:block; }
 .clips-feature-media a { display:block; height:100%; }
 .clips-feature-body { padding:32px; display:flex; flex-direction:column; justify-content:center; gap:12px; }
+.clips-feature-hook { font-size:11.5px; font-weight:700; letter-spacing:.06em; color:#597276; margin-bottom:-6px; }
 .clips-feature-body h3 { font-size:24px; margin:0; letter-spacing:-0.3px; }
 .clips-feature-body p { margin:0; color:#5c6568; font-size:15px; line-height:1.55; }
 .clips-feature-body .secondary-btn { align-self:flex-start; }
