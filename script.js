@@ -7,6 +7,12 @@ const CONFIG = {
   tiendaMercadoLibre: "https://www.mercadolibre.com.ar/pagina/sanitariosparquechacabuco",
   whatsapp: "5491126910527", // Cambiar por tu número. Ej: 5491123456789
 
+  // Descuento para lo que se compra armando el carrito en la web (en vez de
+  // por Mercado Libre). 0.10 = 10%. Se aplica solo a los precios del carrito
+  // y al total que se manda por WhatsApp; no toca el precio mostrado en la
+  // ficha del producto ni el de Mercado Libre.
+  descuentoWeb: 0.10,
+
   // Link CSV publicado de tu Google Sheets (Archivo > Compartir > Publicar en la web > CSV).
   // Si cambiás de planilla o de pestaña, solo hay que reemplazar este link.
   sheetCSV: "https://docs.google.com/spreadsheets/d/e/2PACX-1vTqPz2dRYCP0aDigNWC5IPKEz7bJFozEqVjuYsiq-8XdS91sv3CWP8IlTcq2WHtuBuzyS_YeCHOmYLk/pub?gid=1356223853&single=true&output=csv",
@@ -372,16 +378,32 @@ function vaciarCarrito() {
   renderCarrito();
 }
 
-function totalCarrito() {
-  return CARRITO.reduce((acc, item) => acc + item.precio * item.cantidad, 0);
+// Precio con el 10% OFF de comprar por la web (ver CONFIG.descuentoWeb).
+// Solo se usa acá adentro, en el carrito; no toca el precio de la ficha
+// del producto ni el de Mercado Libre.
+function precioConDescuentoWeb(precio) {
+  return precio * (1 - CONFIG.descuentoWeb);
 }
 
-function mensajeCheckoutCarrito() {
-  const lineas = CARRITO.map(item => `- ${item.cantidad} x ${item.nombre} (${money.format(item.precio)} c/u)`);
+function totalCarrito() {
+  return CARRITO.reduce((acc, item) => acc + precioConDescuentoWeb(item.precio) * item.cantidad, 0);
+}
+
+function mensajeCheckoutCarrito(datos) {
+  const lineas = CARRITO.map(item =>
+    `- ${item.cantidad} x ${item.nombre} (${money.format(precioConDescuentoWeb(item.precio))} c/u con 10% OFF)`
+  );
   return [
     "Hola Sanitarios PCH, quiero hacer este pedido:",
     ...lineas,
-    `Total: ${money.format(totalCarrito())}`,
+    `Total con 10% OFF: ${money.format(totalCarrito())}`,
+    "",
+    "Mis datos:",
+    `Nombre y apellido/Empresa: ${datos.nombre}`,
+    `Provincia: ${datos.provincia}`,
+    `Localidad: ${datos.localidad}`,
+    `Dirección: ${datos.direccion}`,
+    `Teléfono: ${datos.telefono}`,
   ].join("\n");
 }
 
@@ -399,7 +421,10 @@ function renderCarrito() {
       <img src="${item.imagen}" alt="${item.nombre}">
       <div class="cart-item-body">
         <span class="cart-item-name">${item.nombre}</span>
-        <span class="cart-item-price">${money.format(item.precio)}</span>
+        <span class="cart-item-price">
+          <span class="cart-item-price-old">${money.format(item.precio)}</span>
+          <span class="cart-item-price-new">${money.format(precioConDescuentoWeb(item.precio))}</span>
+        </span>
         <div class="cart-item-qty">
           <button class="qty-btn" data-action="menos" data-id="${item.id}" aria-label="Restar uno"><svg width="12" height="12" aria-hidden="true"><use href="#icon-minus"></use></svg></button>
           <span>${item.cantidad}</span>
@@ -418,7 +443,6 @@ function renderCarrito() {
   });
 
   document.getElementById("cartTotal").textContent = money.format(totalCarrito());
-  document.getElementById("cartCheckout").href = `https://wa.me/${CONFIG.whatsapp}?text=${encodeURIComponent(mensajeCheckoutCarrito())}`;
 }
 
 function abrirCarrito() {
@@ -431,6 +455,7 @@ function cerrarCarrito() {
   document.getElementById("cartDrawer").hidden = true;
   document.getElementById("cartOverlay").hidden = true;
   document.body.style.overflow = "";
+  volverAlCarrito();
 }
 
 document.getElementById("cartOpen").addEventListener("click", abrirCarrito);
@@ -440,6 +465,74 @@ document.getElementById("cartEmptyLink").addEventListener("click", cerrarCarrito
 document.getElementById("cartClear").addEventListener("click", vaciarCarrito);
 document.addEventListener("keydown", (e) => {
   if (e.key === "Escape" && !document.getElementById("cartDrawer").hidden) cerrarCarrito();
+});
+
+// ---------- Datos del cliente antes de mandar el pedido por WhatsApp ----------
+const CHECKOUT_STORAGE_KEY = "sanitariosPchCheckoutDatos";
+
+function cargarDatosGuardados() {
+  try {
+    return JSON.parse(localStorage.getItem(CHECKOUT_STORAGE_KEY)) || {};
+  } catch {
+    return {};
+  }
+}
+
+function guardarDatosCheckout(datos) {
+  try {
+    localStorage.setItem(CHECKOUT_STORAGE_KEY, JSON.stringify(datos));
+  } catch {
+    // Si el navegador bloquea localStorage, simplemente no se recuerdan los
+    // datos para la próxima compra; el resto sigue funcionando igual.
+  }
+}
+
+// Cambia el panel del carrito al formulario de datos, precargando lo que
+// el cliente haya cargado en una compra anterior (si el navegador lo guardó).
+function abrirFormularioCheckout() {
+  const datos = cargarDatosGuardados();
+  document.getElementById("checkoutNombre").value = datos.nombre || "";
+  document.getElementById("checkoutProvincia").value = datos.provincia || "";
+  document.getElementById("checkoutLocalidad").value = datos.localidad || "";
+  document.getElementById("checkoutDireccion").value = datos.direccion || "";
+  document.getElementById("checkoutTelefono").value = datos.telefono || "";
+
+  const cantidadTotal = CARRITO.reduce((acc, item) => acc + item.cantidad, 0);
+  document.getElementById("cartFormSummary").innerHTML = `
+    <span>${cantidadTotal} producto${cantidadTotal === 1 ? "" : "s"}</span>
+    <strong>${money.format(totalCarrito())}</strong>
+  `;
+
+  document.getElementById("cartItems").hidden = true;
+  document.getElementById("cartFooter").hidden = true;
+  document.getElementById("cartCheckoutForm").hidden = false;
+  document.getElementById("cartDrawerTitle").textContent = "Tus datos";
+}
+
+function volverAlCarrito() {
+  document.getElementById("cartCheckoutForm").hidden = true;
+  document.getElementById("cartItems").hidden = false;
+  document.getElementById("cartFooter").hidden = CARRITO.length === 0;
+  document.getElementById("cartDrawerTitle").textContent = "Tu carrito";
+}
+
+document.getElementById("cartCheckout").addEventListener("click", abrirFormularioCheckout);
+document.getElementById("cartFormBack").addEventListener("click", volverAlCarrito);
+
+document.getElementById("cartCheckoutForm").addEventListener("submit", (e) => {
+  e.preventDefault();
+  const datos = {
+    nombre: document.getElementById("checkoutNombre").value.trim(),
+    provincia: document.getElementById("checkoutProvincia").value,
+    localidad: document.getElementById("checkoutLocalidad").value.trim(),
+    direccion: document.getElementById("checkoutDireccion").value.trim(),
+    telefono: document.getElementById("checkoutTelefono").value.trim(),
+  };
+  guardarDatosCheckout(datos);
+  const url = `https://wa.me/${CONFIG.whatsapp}?text=${encodeURIComponent(mensajeCheckoutCarrito(datos))}`;
+  window.open(url, "_blank", "noopener");
+  vaciarCarrito();
+  cerrarCarrito();
 });
 
 renderCarrito();

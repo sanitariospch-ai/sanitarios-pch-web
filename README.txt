@@ -41,23 +41,40 @@ solo con las categorías que uses en la columna "Categoria" de tu planilla —
 no hay que tocar nada), Contacto y Mayoristas (los dos últimos abren WhatsApp
 con un mensaje distinto cada uno, editable en `script.js`).
 
-## Carrito (3er canal de venta)
+## Barra de promos (arriba de todo)
+
+La franja que se mueve horizontalmente arriba del header ("SANITARIOS PCH",
+"ARMÁ TU CARRITO · 10% OFF", etc.) es texto fijo en `index.html`, dentro de
+`<div class="ticker">`. Para cambiar los textos, editá los `<span
+class="ticker-item">` — hay que repetir la misma lista dos veces seguidas
+(así el loop no se corta) y las dos copias tienen que decir lo mismo.
+
+## Carrito (3er canal de venta) y 10% OFF
 
 Además de comprar por Mercado Libre o consultar por WhatsApp, cada producto
 tiene un botón de carrito (🛒) para armar un pedido en la web. El botón
 "Comprá mediante la web" de la franja de arriba del Home lleva al catálogo
 para empezar. El carrito:
 
+- Aplica automáticamente un **10% OFF** sobre el precio cargado (el mismo
+  precio de Mercado Libre) — se ve en el carrito con el precio de lista
+  tachado y el precio final al lado. El porcentaje se controla desde
+  `CONFIG.descuentoWeb` en `script.js` (0.10 = 10%); no toca el precio
+  mostrado en la ficha del producto ni el de Mercado Libre, solo el del
+  carrito.
 - Se guarda en el navegador de cada visitante (localStorage), así que si
   cierran la página y vuelven más tarde lo siguen teniendo.
-- No procesa pagos ni envíos: al tocar "Finalizar compra por WhatsApp" arma
-  un mensaje con el detalle del pedido (productos, cantidades y total) y lo
-  manda a tu WhatsApp para que coordines la compra con el cliente ahí.
 - No se ofrece para productos "Sin Stock" (no tendría sentido armar un
   pedido de algo que no hay).
+- Antes de mandar el pedido, pide los datos del cliente: **Nombre y
+  apellido/Empresa, Provincia, Localidad, Dirección y Teléfono**. Al
+  confirmar, arma un mensaje con esos datos + el detalle del pedido
+  (productos, cantidades y total con el 10% OFF ya aplicado) y lo manda a
+  tu WhatsApp para que coordines la entrega y el pago. El navegador
+  recuerda los datos para la próxima vez que ese mismo visitante compre.
 
-No hay nada que configurar para que funcione — ya usa `CONFIG.whatsapp` y
-los datos de cada producto de la planilla.
+No hay nada más que configurar para que funcione — ya usa `CONFIG.whatsapp`
+y los datos de cada producto de la planilla.
 
 ## Cómo cargar videos en el Home (sección "Videos")
 

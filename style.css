@@ -10,6 +10,25 @@ body {
 }
 .container { width: min(1180px, calc(100% - 40px)); margin: auto; }
 
+.ticker {
+  background:#183b3f; color:#fff; overflow:hidden; white-space:nowrap;
+}
+.ticker-track {
+  display:inline-flex; padding:9px 0; animation: ticker-scroll 22s linear infinite;
+}
+.ticker:hover .ticker-track { animation-play-state: paused; }
+.ticker-item {
+  padding:0 28px; font-size:12.5px; font-weight:700; letter-spacing:.04em;
+  border-right:1px solid rgba(255,255,255,.2);
+}
+@keyframes ticker-scroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ticker-track { animation: none; overflow-x: auto; }
+}
+
 .header {
   background: #fff;
   border-bottom: 1px solid #e8e8e4;
@@ -83,12 +102,14 @@ body {
   display:flex; flex-direction:column; overflow-y:auto;
 }
 .cart-drawer[hidden] { display:none; }
-.cart-items { display:flex; flex-direction:column; padding:8px 20px; gap:14px; }
+.cart-items:not([hidden]) { display:flex; flex-direction:column; padding:8px 20px; gap:14px; }
 .cart-item { display:flex; gap:12px; align-items:flex-start; }
 .cart-item img { width:56px; height:56px; object-fit:contain; background:#eef0ed; border-radius:8px; flex:none; }
 .cart-item-body { flex:1; display:flex; flex-direction:column; gap:4px; min-width:0; }
 .cart-item-name { font-size:13.5px; font-weight:600; line-height:1.3; }
-.cart-item-price { font-size:12.5px; color:#5c6568; }
+.cart-item-price { display:flex; align-items:baseline; gap:6px; font-size:12.5px; }
+.cart-item-price-old { color:#a3acae; text-decoration:line-through; }
+.cart-item-price-new { color:#183b3f; font-weight:700; }
 .cart-item-qty { display:flex; align-items:center; gap:10px; margin-top:2px; }
 .qty-btn {
   width:24px; height:24px; border-radius:6px; border:1px solid #d9ddda; background:#fff;
@@ -106,9 +127,13 @@ body {
 .cart-empty[hidden] { display:none; }
 .cart-footer { padding:16px 20px 20px; border-top:1px solid #eef0ed; margin-top:auto; }
 .cart-footer[hidden] { display:none; }
+.cart-discount-note {
+  margin:0 0 12px; padding:8px 10px; background:#eef8f0; border-radius:6px;
+  font-size:12.5px; color:#1f6b39; line-height:1.4;
+}
 .cart-total { display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; font-size:15px; }
 .cart-total strong { font-size:19px; }
-.cart-checkout { display:block; width:100%; text-align:center; box-sizing:border-box; }
+.cart-checkout { display:block; width:100%; text-align:center; box-sizing:border-box; border:none; cursor:pointer; font:inherit; }
 .cart-clear {
   display:block; width:100%; text-align:center; margin-top:10px; padding:10px;
   border:none; background:transparent; color:#5c6568; font:inherit; font-size:13px; cursor:pointer;
@@ -120,6 +145,28 @@ body {
   background:#fff; color:#183b3f; cursor:pointer;
 }
 .cart-add:hover { background:#f2f4f2; }
+
+.cart-checkout-form:not([hidden]) { display:flex; flex-direction:column; padding:8px 20px 20px; gap:14px; }
+.cart-form-back {
+  align-self:flex-start; border:none; background:transparent; color:#5c6568;
+  font:inherit; font-size:13px; cursor:pointer; padding:4px 0;
+}
+.cart-form-back:hover { color:#183b3f; }
+.cart-form-intro { margin:0; font-size:13px; color:#5c6568; line-height:1.5; }
+.cart-form-summary {
+  display:flex; justify-content:space-between; align-items:center;
+  background:#f7f7f5; border-radius:8px; padding:10px 12px; font-size:13px;
+}
+.cart-form-summary strong { font-size:15px; }
+.cart-form-field {
+  display:flex; flex-direction:column; gap:6px; font-size:12.5px; font-weight:600; color:#445052;
+}
+.cart-form-field input, .cart-form-field select {
+  padding:11px 12px; border:1px solid #d9ddda; border-radius:8px; background:#fff;
+  font:inherit; font-size:14px; font-weight:400; color:#182026; outline:none;
+}
+.cart-form-field input:focus, .cart-form-field select:focus { border-color:#183b3f; }
+.cart-checkout-form .cart-checkout { margin-top:4px; }
 
 .hero {
   background: linear-gradient(160deg, #eef6f1 0%, #dfeee5 55%, #d3e9dd 100%);
