@@ -25,12 +25,32 @@ const CONFIG = {
   //  2) Solo un link (por ejemplo a la publicación/clip en Mercado Libre): poner
   //     "poster" (imagen) y "link" — el video grande lleva a ese link en vez de
   //     reproducirse acá.
-  // Campos: titulo, texto, categoria (agrupa los videos en pestañas; si la
-  // dejás vacía todos caen en una única pestaña "Videos"), poster (imagen),
-  // video (opcional, .mp4), link (opcional).
+  // Campos: hook (pregunta o frase corta arriba del título, opcional),
+  // titulo, texto, categoria (agrupa los videos en pestañas; si la dejás
+  // vacía todos caen en una única pestaña "Videos"), poster (imagen), video
+  // (opcional, .mp4), link (opcional).
   clips: [
-    // { titulo: "Aspiradora SWIFT", texto: "Limpiá la casa o el auto en minutos.",
-    //   categoria: "Aspiradoras", poster: "", video: "", link: "" },
+    { hook: "¿SE TE ROMPIÓ LA MANGUERA DE AGUA?", titulo: "Flexibles de agua Tecnoform",
+      texto: "Conexión de 1/2\" en distintos largos, en acero inoxidable premium. Para canillas, inodoros y artefactos de baño y cocina.",
+      categoria: "Flexibles de Agua", poster: "videos/posters/flexibles-de-agua.jpg", video: "videos/flexibles-de-agua.mp4" },
+    { hook: "CONEXIÓN DE GAS SEGURA Y APROBADA", titulo: "Flexibles de gas Tecnoform",
+      texto: "Aprobados para gas natural o envasado. Medida fija o extensible, elegí el largo que necesitás.",
+      categoria: "Flexibles de Gas", poster: "videos/posters/flexibles-de-gas.jpg", video: "videos/flexibles-de-gas.mp4" },
+    { hook: "¿PÉRDIDAS EN EL DESAGÜE DE LA BACHA?", titulo: "Sopapa de desagüe para bacha",
+      texto: "Repuesto de desagüe de 1 1/4\" para bacha, fácil de instalar.",
+      categoria: "Desagües", poster: "videos/posters/desagua-sopapa-bacha.jpg", video: "videos/desagua-sopapa-bacha.mp4" },
+    { hook: "¿LA MOCHILA DEL INODORO NO CORTA EL AGUA?", titulo: "Varillas de flotante para mochila",
+      texto: "Varillas en distintos largos para regular el nivel de agua del tanque.",
+      categoria: "Flotantes", poster: "videos/posters/flotantes.jpg", video: "videos/flotantes.mp4" },
+    { hook: "INSTALÁ TU INODORO SIN VUELTAS", titulo: "Fuelles conectores Gon-Ren",
+      texto: "Conectores para inodoro con tuerca, para mochila de colgar flexible o descarga de pared. Instalación en 3 pasos.",
+      categoria: "Fuelles", poster: "videos/posters/fuelles-inodoro.jpg", video: "videos/fuelles-inodoro.mp4" },
+    { hook: "SUJECIÓN FIRME PARA TUS CAÑOS", titulo: "Grampas Magari",
+      texto: "Abrazaderas para fijar cañerías de forma segura y prolija.",
+      categoria: "Grampas", poster: "videos/posters/grampas-magari.jpg", video: "videos/grampas-magari.mp4" },
+    { hook: "SIFÓN CON TRIPLE ACCESO", titulo: "Sifones frontales Gon-Ren",
+      texto: "Sifón doble o simple. Instalación a bacha, a pared o para lavarropas. Industria argentina.",
+      categoria: "Sifones", poster: "videos/posters/sifones-gon-ren.jpg", video: "videos/sifones-gon-ren.mp4" },
   ],
 };
 
@@ -62,6 +82,13 @@ function parsePrecio(texto) {
     .replace(",", ".");
   const num = parseFloat(limpio);
   return isNaN(num) ? 0 : num;
+}
+
+// Interpreta cualquier columna simple de sí/no de la planilla (por ejemplo
+// "Destacado"). Vacío o cualquier otra cosa que no sea un "sí" cuenta como no.
+function esSiVerdadero(valor) {
+  const v = String(valor || "").trim().toLowerCase();
+  return ["si", "sí", "yes", "true", "1", "x"].includes(v);
 }
 
 // Interpreta la columna "Mostrar": "si" (o vacío) muestra normal, "no" la oculta
@@ -106,11 +133,13 @@ async function cargarProductos() {
           imagen: fotos[0],
           link: (fila["Link Mercado Libre"] || CONFIG.tiendaMercadoLibre).trim(),
           sinStock: estadoPublicacion(fila["Mostrar"]) === "sin_stock",
+          destacado: esSiVerdadero(fila["Destacado"]),
         };
       });
 
     renderCategories();
     renderProducts();
+    renderDestacados();
   } catch (err) {
     console.error("Error cargando productos desde Google Sheets:", err);
     grid.innerHTML = `<p class="loading-msg">No pudimos cargar los productos en este momento. Probá de nuevo más tarde.</p>`;
@@ -161,6 +190,44 @@ function renderDrawerCategories(categories) {
   });
 }
 
+// Tarjeta de producto: la usan tanto la grilla del catálogo como la de
+// "Destacados". `index` es la posición dentro del array que después se usa
+// para resolver los clics (ver conectarTarjetas).
+function productCardHTML(p, index) {
+  return `
+    <article class="product ${p.sinStock ? "sin-stock" : ""}" data-index="${index}">
+      <div class="product-thumb">
+        ${p.sinStock ? `<span class="stock-badge">Sin stock</span>` : ""}
+        <img class="product-img" src="${p.imagen}" alt="${p.nombre}" loading="lazy">
+      </div>
+      <div class="product-body">
+        <div class="product-category">${p.categoria}</div>
+        <h3>${p.nombre}</h3>
+        <div class="price">${money.format(p.precio)}</div>
+        <div class="product-actions">
+          <a class="buy" href="${p.link}" target="_blank" rel="noopener" onclick="event.stopPropagation()">Comprar</a>
+          ${p.sinStock ? "" : `<button class="cart-add" data-id="${idProducto(p)}" title="Agregar al carrito" onclick="event.stopPropagation()"><svg width="16" height="16" aria-hidden="true"><use href="#icon-cart"></use></svg></button>`}
+          <a class="consult" href="${whatsappLink(p)}" target="_blank" rel="noopener" title="${p.sinStock ? "Consultar por nuevo stock" : "Consultar por WhatsApp"}" onclick="event.stopPropagation()">${WHATSAPP_ICON_SVG}</a>
+        </div>
+      </div>
+    </article>
+  `;
+}
+
+// Conecta los clics de una grilla de tarjetas ya renderizada (abrir ficha,
+// agregar al carrito) contra la lista de productos que la llenó.
+function conectarTarjetas(contenedor, listaProductos) {
+  contenedor.querySelectorAll(".product").forEach(card => {
+    card.addEventListener("click", () => abrirFicha(listaProductos[Number(card.dataset.index)]));
+  });
+  contenedor.querySelectorAll(".cart-add").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const producto = listaProductos.find(p => idProducto(p) === btn.dataset.id);
+      if (producto) agregarAlCarrito(producto);
+    });
+  });
+}
+
 function renderProducts() {
   const query = document.getElementById("search").value.toLowerCase().trim();
 
@@ -178,38 +245,33 @@ function renderProducts() {
 
   const productosAMostrar = productosFiltrados.slice(0, productosVisiblesCount);
 
-  document.getElementById("productGrid").innerHTML = productosAMostrar.map((p, i) => `
-    <article class="product ${p.sinStock ? "sin-stock" : ""}" data-index="${i}">
-      <div class="product-thumb">
-        ${p.sinStock ? `<span class="stock-badge">Sin stock</span>` : ""}
-        <img class="product-img" src="${p.imagen}" alt="${p.nombre}" loading="lazy">
-      </div>
-      <div class="product-body">
-        <div class="product-category">${p.categoria}</div>
-        <h3>${p.nombre}</h3>
-        <div class="price">${money.format(p.precio)}</div>
-        <div class="product-actions">
-          <a class="buy" href="${p.link}" target="_blank" rel="noopener" onclick="event.stopPropagation()">Comprar</a>
-          ${p.sinStock ? "" : `<button class="cart-add" data-id="${idProducto(p)}" title="Agregar al carrito" onclick="event.stopPropagation()"><svg width="16" height="16" aria-hidden="true"><use href="#icon-cart"></use></svg></button>`}
-          <a class="consult" href="${whatsappLink(p)}" target="_blank" rel="noopener" title="${p.sinStock ? "Consultar por nuevo stock" : "Consultar por WhatsApp"}" onclick="event.stopPropagation()">${WHATSAPP_ICON_SVG}</a>
-        </div>
-      </div>
-    </article>
-  `).join("");
+  const grid = document.getElementById("productGrid");
+  grid.innerHTML = productosAMostrar.map((p, i) => productCardHTML(p, i)).join("");
 
   document.getElementById("empty").hidden = productosFiltrados.length !== 0;
   document.getElementById("loadMoreWrap").hidden = productosFiltrados.length <= productosVisiblesCount;
 
-  document.querySelectorAll(".product").forEach(card => {
-    card.addEventListener("click", () => abrirFicha(productosVisibles[Number(card.dataset.index)]));
-  });
+  conectarTarjetas(grid, productosVisibles);
+}
 
-  document.querySelectorAll(".cart-add").forEach(btn => {
-    btn.addEventListener("click", () => {
-      const producto = productosVisibles.find(p => idProducto(p) === btn.dataset.id);
-      if (producto) agregarAlCarrito(producto);
-    });
-  });
+// ---------- Destacados (franja de productos elegidos arriba de "Videos") ----------
+// Se arma sola con los productos que tengan "Si" en la columna "Destacado"
+// de la planilla; si no hay ninguno, la sección queda oculta.
+let productosDestacados = [];
+
+function renderDestacados() {
+  const section = document.getElementById("destacados");
+  productosDestacados = PRODUCTOS.filter(p => p.destacado);
+
+  if (productosDestacados.length === 0) {
+    section.hidden = true;
+    return;
+  }
+  section.hidden = false;
+
+  const grid = document.getElementById("destacadosGrid");
+  grid.innerHTML = productosDestacados.map((p, i) => productCardHTML(p, i)).join("");
+  conectarTarjetas(grid, productosDestacados);
 }
 
 // ---------- Ficha de producto (modal con varias fotos) ----------
@@ -580,6 +642,7 @@ function renderClips() {
         : `<a href="${activo.link || CONFIG.tiendaMercadoLibre}" target="_blank" rel="noopener"><img src="${activo.poster || ""}" alt="${activo.titulo || ""}"></a>`}
     </div>
     <div class="clips-feature-body">
+      ${activo.hook ? `<span class="clips-feature-hook">${activo.hook}</span>` : ""}
       <h3>${activo.titulo || ""}</h3>
       <p>${activo.texto || ""}</p>
       <a class="secondary-btn" href="${activo.link || CONFIG.tiendaMercadoLibre}" target="_blank" rel="noopener">Ver más</a>
