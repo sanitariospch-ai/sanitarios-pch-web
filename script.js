@@ -140,11 +140,46 @@ async function cargarProductos() {
     renderCategories();
     renderProducts();
     renderDestacados();
+    actualizarDatosEstructurados();
   } catch (err) {
     console.error("Error cargando productos desde Google Sheets:", err);
     grid.innerHTML = `<p class="loading-msg">No pudimos cargar los productos en este momento. Probá de nuevo más tarde.</p>`;
     document.getElementById("empty").hidden = true;
   }
+}
+
+// Datos estructurados (schema.org) para que Google entienda qué productos
+// hay en la página, con su precio y si tienen stock. Se arma una sola vez
+// con todos los productos cargados (no solo los que están visibles antes
+// de tocar "Ver más productos"), apuntando el link de compra a la
+// publicación real de Mercado Libre de cada uno.
+function actualizarDatosEstructurados() {
+  const urlPagina = document.querySelector('link[rel="canonical"]').href;
+  const datos = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    itemListElement: PRODUCTOS.map((p, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      item: {
+        "@type": "Product",
+        name: p.nombre,
+        image: p.imagen,
+        ...(p.descripcion ? { description: p.descripcion } : {}),
+        category: p.categoria,
+        ...(p.codigo ? { sku: p.codigo } : {}),
+        url: urlPagina,
+        offers: {
+          "@type": "Offer",
+          url: p.link,
+          priceCurrency: "ARS",
+          price: p.precio,
+          availability: p.sinStock ? "https://schema.org/OutOfStock" : "https://schema.org/InStock",
+        },
+      },
+    })),
+  };
+  document.getElementById("productsSchema").textContent = JSON.stringify(datos);
 }
 
 // Identificador único de un producto para el carrito: el Código de la
