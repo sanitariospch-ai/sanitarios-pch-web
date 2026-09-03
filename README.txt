@@ -31,3 +31,35 @@ También cambiá en `script.js`:
 
 - `CONFIG.tiendaMercadoLibre` por el link de tu tienda.
 - `CONFIG.whatsapp` por tu número de WhatsApp en formato internacional sin + ni espacios.
+
+## Menú lateral
+
+El botón ☰ (arriba a la izquierda) abre un menú con Home, Categorías (se arma
+solo con las categorías que uses en la columna "Categoria" de tu planilla —
+no hay que tocar nada), Contacto y Mayoristas (los dos últimos abren WhatsApp
+con un mensaje distinto cada uno, editable en `script.js`).
+
+## Cómo cargar videos en el Home (sección "Videos")
+
+La sección "Videos" del Home queda oculta hasta que cargues al menos un
+video en `CONFIG.clips`, en `script.js`. Para cada video agregá un objeto
+a la lista con estos campos:
+
+- `titulo` y `texto`: el texto que se ve debajo del video.
+- `poster`: una imagen de portada (obligatoria si no ponés `video`).
+- `video` (opcional): link directo a un archivo .mp4. Si lo completás, el
+  video se reproduce en la tarjeta (se pausa/reproduce solo al pasar el
+  mouse). Si lo dejás vacío, la tarjeta muestra la imagen de `poster` y
+  al hacer clic lleva al link de `link`.
+- `link` (opcional): a dónde lleva la tarjeta al hacer clic (por ejemplo,
+  la publicación en Mercado Libre). Si lo dejás vacío, usa
+  `CONFIG.tiendaMercadoLibre`.
+
+Ejemplo:
+
+```js
+clips: [
+  { titulo: "Aspiradora SWIFT", texto: "Limpiá la casa o el auto en minutos.",
+    poster: "https://.../portada.jpg", video: "https://.../clip.mp4", link: "" },
+],
+```

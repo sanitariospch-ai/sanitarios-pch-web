@@ -10,6 +10,18 @@ const CONFIG = {
   // Link CSV publicado de tu Google Sheets (Archivo > Compartir > Publicar en la web > CSV).
   // Si cambiás de planilla o de pestaña, solo hay que reemplazar este link.
   sheetCSV: "https://docs.google.com/spreadsheets/d/e/2PACX-1vTqPz2dRYCP0aDigNWC5IPKEz7bJFozEqVjuYsiq-8XdS91sv3CWP8IlTcq2WHtuBuzyS_YeCHOmYLk/pub?gid=1356223853&single=true&output=csv",
+
+  // Videos para la sección "Videos" del Home (tipo Clips de Mercado Libre).
+  // Mientras esta lista esté vacía, la sección queda oculta automáticamente.
+  // Para agregar un video, sumá un objeto acá. Dos formas:
+  //  1) Video propio: poner "video" con el link directo a un .mp4 (por ejemplo
+  //     subido a tu Google Drive/Github) y "poster" con una imagen de portada.
+  //  2) Solo un link (por ejemplo a la publicación/clip en Mercado Libre): poner
+  //     "poster" (imagen) y "link" — la tarjeta lleva a ese link en vez de reproducir acá.
+  // Campos: titulo, texto, poster (imagen), video (opcional, .mp4), link (opcional).
+  clips: [
+    // { titulo: "Aspiradora SWIFT", texto: "Limpiá la casa o el auto en minutos.", poster: "", video: "", link: "" },
+  ],
 };
 
 // Los productos se cargan automáticamente desde CONFIG.sheetCSV (ver cargarProductos()).
@@ -111,12 +123,32 @@ function renderCategories() {
   `).join("");
 
   document.querySelectorAll(".category").forEach(btn => {
-    btn.addEventListener("click", () => {
-      categoriaActual = btn.dataset.category;
-      productosVisiblesCount = PRODUCTOS_POR_TANDA;
-      renderCategories();
-      renderProducts();
-    });
+    btn.addEventListener("click", () => irACategoria(btn.dataset.category));
+  });
+
+  renderDrawerCategories(categories);
+}
+
+// Filtra por categoría y hace scroll al catálogo. La usan tanto los chips
+// de arriba del catálogo como el submenú "Categorías" del menú lateral.
+function irACategoria(categoria) {
+  categoriaActual = categoria;
+  productosVisiblesCount = PRODUCTOS_POR_TANDA;
+  renderCategories();
+  renderProducts();
+  cerrarDrawer();
+  document.getElementById("productos").scrollIntoView({ behavior: "smooth" });
+}
+
+// Arma el submenú "Categorías" del menú lateral con las categorías reales
+// de la planilla (se actualiza solo, no hace falta tocar nada acá).
+function renderDrawerCategories(categories) {
+  document.getElementById("drawerCategoriesSubmenu").innerHTML = categories.map(cat => `
+    <button class="drawer-sublink ${cat === categoriaActual ? "active" : ""}" data-category="${cat}">${cat}</button>
+  `).join("");
+
+  document.querySelectorAll(".drawer-sublink").forEach(btn => {
+    btn.addEventListener("click", () => irACategoria(btn.dataset.category));
   });
 }
 
@@ -229,6 +261,68 @@ document.addEventListener("keydown", (e) => {
   if (e.key === "ArrowLeft") fichaAnterior();
 });
 
+// ---------- Menú lateral (drawer) ----------
+function abrirDrawer() {
+  document.getElementById("drawer").hidden = false;
+  document.getElementById("drawerOverlay").hidden = false;
+  document.body.style.overflow = "hidden";
+}
+
+function cerrarDrawer() {
+  document.getElementById("drawer").hidden = true;
+  document.getElementById("drawerOverlay").hidden = true;
+  document.body.style.overflow = "";
+}
+
+document.getElementById("drawerOpen").addEventListener("click", abrirDrawer);
+document.getElementById("drawerClose").addEventListener("click", cerrarDrawer);
+document.getElementById("drawerOverlay").addEventListener("click", cerrarDrawer);
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape" && !document.getElementById("drawer").hidden) cerrarDrawer();
+});
+
+document.getElementById("drawerHome").addEventListener("click", (e) => {
+  e.preventDefault();
+  cerrarDrawer();
+  window.scrollTo({ top: 0, behavior: "smooth" });
+});
+
+document.getElementById("drawerCategoriesToggle").addEventListener("click", function () {
+  const submenu = document.getElementById("drawerCategoriesSubmenu");
+  const abierto = submenu.hidden;
+  submenu.hidden = !abierto;
+  this.setAttribute("aria-expanded", String(abierto));
+  this.classList.toggle("is-open", abierto);
+});
+
+// ---------- Videos (sección "Videos" del Home) ----------
+function renderClips() {
+  const section = document.getElementById("clips");
+  if (!CONFIG.clips || CONFIG.clips.length === 0) {
+    section.hidden = true;
+    return;
+  }
+  section.hidden = false;
+  document.getElementById("clipsGrid").innerHTML = CONFIG.clips.map(c => `
+    <a class="clip-card" href="${c.link || CONFIG.tiendaMercadoLibre}" target="_blank" rel="noopener">
+      ${c.video
+        ? `<video class="clip-media" src="${c.video}" poster="${c.poster || ""}" muted loop playsinline preload="metadata"></video>`
+        : `<img class="clip-media" src="${c.poster || ""}" alt="${c.titulo || ""}" loading="lazy">`}
+      <div class="clip-body">
+        <h3>${c.titulo || ""}</h3>
+        <p>${c.texto || ""}</p>
+        <span class="clip-cta">Ver más</span>
+      </div>
+    </a>
+  `).join("");
+
+  document.querySelectorAll(".clip-card video").forEach(video => {
+    video.addEventListener("mouseenter", () => video.play());
+    video.addEventListener("mouseleave", () => video.pause());
+  });
+}
+renderClips();
+
 document.getElementById("search").addEventListener("input", () => {
   productosVisiblesCount = PRODUCTOS_POR_TANDA;
   renderProducts();
@@ -248,5 +342,14 @@ document.getElementById("heroStoreLink").href = CONFIG.tiendaMercadoLibre;
 document.getElementById("heroWhatsappQuote").href = `https://wa.me/${CONFIG.whatsapp}?text=${encodeURIComponent("Hola Sanitarios PCH, quiero pedir un presupuesto.")}`;
 document.getElementById("heroWhatsappListing").href = `https://wa.me/${CONFIG.whatsapp}?text=${encodeURIComponent("Hola Sanitarios PCH, quiero pedirte que me ayudes a armar una publicación en Mercado Libre.")}`;
 document.getElementById("infoWhatsapp").href = `https://wa.me/${CONFIG.whatsapp}?text=${encodeURIComponent("Hola Sanitarios PCH, tengo una consulta.")}`;
+
+document.getElementById("drawerContacto").href = `https://wa.me/${CONFIG.whatsapp}?text=${encodeURIComponent("Hola Sanitarios PCH, tengo una consulta.")}`;
+document.getElementById("drawerMayoristas").href = `https://wa.me/${CONFIG.whatsapp}?text=${encodeURIComponent("Hola Sanitarios PCH, soy una empresa y quiero consultar por compra mayorista.")}`;
+
+document.getElementById("headerSearchBtn").addEventListener("click", () => {
+  cerrarDrawer();
+  document.getElementById("productos").scrollIntoView({ behavior: "smooth" });
+  document.getElementById("search").focus();
+});
 
 cargarProductos();
