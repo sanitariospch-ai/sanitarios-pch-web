@@ -17,10 +17,14 @@ const CONFIG = {
   //  1) Video propio: poner "video" con el link directo a un .mp4 (por ejemplo
   //     subido a tu Google Drive/Github) y "poster" con una imagen de portada.
   //  2) Solo un link (por ejemplo a la publicación/clip en Mercado Libre): poner
-  //     "poster" (imagen) y "link" — la tarjeta lleva a ese link en vez de reproducir acá.
-  // Campos: titulo, texto, poster (imagen), video (opcional, .mp4), link (opcional).
+  //     "poster" (imagen) y "link" — el video grande lleva a ese link en vez de
+  //     reproducirse acá.
+  // Campos: titulo, texto, categoria (agrupa los videos en pestañas; si la
+  // dejás vacía todos caen en una única pestaña "Videos"), poster (imagen),
+  // video (opcional, .mp4), link (opcional).
   clips: [
-    // { titulo: "Aspiradora SWIFT", texto: "Limpiá la casa o el auto en minutos.", poster: "", video: "", link: "" },
+    // { titulo: "Aspiradora SWIFT", texto: "Limpiá la casa o el auto en minutos.",
+    //   categoria: "Aspiradoras", poster: "", video: "", link: "" },
   ],
 };
 
@@ -87,6 +91,7 @@ async function cargarProductos() {
         if (fotos.length === 0) fotos.push("https://placehold.co/700x700/e9efec/183b3f?text=Sin+foto");
 
         return {
+          codigo: (fila["Codigo"] || "").trim(),
           nombre: (fila["Nombre Publicacion"] || "").trim(),
           precio: parsePrecio(fila["Precio Web"]),
           categoria: (fila["Categoria"] || "Otros").trim(),
@@ -107,6 +112,12 @@ async function cargarProductos() {
   }
 }
 
+// Identificador único de un producto para el carrito: el Código de la
+// planilla si está cargado, si no el nombre (alcanza para no duplicar).
+function idProducto(p) {
+  return p.codigo || p.nombre;
+}
+
 function whatsappLink(producto) {
   const mensaje = producto.sinStock
     ? `Hola Sanitarios PCH, quiero consultar cuándo van a tener nuevo stock de: ${producto.nombre}`
@@ -114,23 +125,15 @@ function whatsappLink(producto) {
   return `https://wa.me/${CONFIG.whatsapp}?text=${encodeURIComponent(mensaje)}`;
 }
 
+// El filtro por categoría vive únicamente en el submenú "Categorías" del
+// menú lateral (no hay barra de categorías en el Home).
 function renderCategories() {
   const categories = ["Todos", ...new Set(PRODUCTOS.map(p => p.categoria))];
-  document.getElementById("categories").innerHTML = categories.map(cat => `
-    <button class="category ${cat === categoriaActual ? "active" : ""}" data-category="${cat}">
-      ${cat}
-    </button>
-  `).join("");
-
-  document.querySelectorAll(".category").forEach(btn => {
-    btn.addEventListener("click", () => irACategoria(btn.dataset.category));
-  });
-
   renderDrawerCategories(categories);
 }
 
-// Filtra por categoría y hace scroll al catálogo. La usan tanto los chips
-// de arriba del catálogo como el submenú "Categorías" del menú lateral.
+// Filtra por categoría y hace scroll al catálogo. La usa el submenú
+// "Categorías" del menú lateral.
 function irACategoria(categoria) {
   categoriaActual = categoria;
   productosVisiblesCount = PRODUCTOS_POR_TANDA;
@@ -181,6 +184,7 @@ function renderProducts() {
         <div class="price">${money.format(p.precio)}</div>
         <div class="product-actions">
           <a class="buy" href="${p.link}" target="_blank" rel="noopener" onclick="event.stopPropagation()">Comprar</a>
+          ${p.sinStock ? "" : `<button class="cart-add" data-id="${idProducto(p)}" title="Agregar al carrito" onclick="event.stopPropagation()"><svg width="16" height="16" aria-hidden="true"><use href="#icon-cart"></use></svg></button>`}
           <a class="consult" href="${whatsappLink(p)}" target="_blank" rel="noopener" title="${p.sinStock ? "Consultar por nuevo stock" : "Consultar por WhatsApp"}" onclick="event.stopPropagation()">${WHATSAPP_ICON_SVG}</a>
         </div>
       </div>
@@ -192,6 +196,13 @@ function renderProducts() {
 
   document.querySelectorAll(".product").forEach(card => {
     card.addEventListener("click", () => abrirFicha(productosVisibles[Number(card.dataset.index)]));
+  });
+
+  document.querySelectorAll(".cart-add").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const producto = productosVisibles.find(p => idProducto(p) === btn.dataset.id);
+      if (producto) agregarAlCarrito(producto);
+    });
   });
 }
 
@@ -212,6 +223,9 @@ function abrirFicha(p) {
   document.getElementById("modalComprar").href = p.link;
   document.getElementById("modalConsultar").href = whatsappLink(p);
   document.getElementById("modalStockBadge").hidden = !p.sinStock;
+  const modalCartBtn = document.getElementById("modalCartAdd");
+  modalCartBtn.hidden = p.sinStock;
+  modalCartBtn.onclick = () => agregarAlCarrito(p);
 
   renderFichaFoto();
   document.getElementById("modalDots").innerHTML = fichaFotos.map((_, i) =>
@@ -295,7 +309,147 @@ document.getElementById("drawerCategoriesToggle").addEventListener("click", func
   this.classList.toggle("is-open", abierto);
 });
 
+// ---------- Carrito (3er canal de venta: se arma en la web, se cierra por WhatsApp) ----------
+const CARRITO_STORAGE_KEY = "sanitariosPchCarrito";
+
+function cargarCarritoGuardado() {
+  try {
+    const guardado = JSON.parse(localStorage.getItem(CARRITO_STORAGE_KEY));
+    return Array.isArray(guardado) ? guardado : [];
+  } catch {
+    return [];
+  }
+}
+
+let CARRITO = cargarCarritoGuardado();
+
+function guardarCarrito() {
+  try {
+    localStorage.setItem(CARRITO_STORAGE_KEY, JSON.stringify(CARRITO));
+  } catch {
+    // Si el navegador bloquea localStorage (modo privado, etc.) el carrito
+    // simplemente no persiste entre visitas; no rompe el resto de la página.
+  }
+}
+
+function agregarAlCarrito(producto) {
+  const id = idProducto(producto);
+  const existente = CARRITO.find(item => item.id === id);
+  if (existente) {
+    existente.cantidad += 1;
+  } else {
+    CARRITO.push({
+      id,
+      nombre: producto.nombre,
+      precio: producto.precio,
+      imagen: producto.imagen,
+      cantidad: 1,
+    });
+  }
+  guardarCarrito();
+  renderCarrito();
+  abrirCarrito();
+}
+
+function cambiarCantidad(id, delta) {
+  const item = CARRITO.find(i => i.id === id);
+  if (!item) return;
+  item.cantidad += delta;
+  if (item.cantidad <= 0) CARRITO = CARRITO.filter(i => i.id !== id);
+  guardarCarrito();
+  renderCarrito();
+}
+
+function quitarDelCarrito(id) {
+  CARRITO = CARRITO.filter(i => i.id !== id);
+  guardarCarrito();
+  renderCarrito();
+}
+
+function vaciarCarrito() {
+  CARRITO = [];
+  guardarCarrito();
+  renderCarrito();
+}
+
+function totalCarrito() {
+  return CARRITO.reduce((acc, item) => acc + item.precio * item.cantidad, 0);
+}
+
+function mensajeCheckoutCarrito() {
+  const lineas = CARRITO.map(item => `- ${item.cantidad} x ${item.nombre} (${money.format(item.precio)} c/u)`);
+  return [
+    "Hola Sanitarios PCH, quiero hacer este pedido:",
+    ...lineas,
+    `Total: ${money.format(totalCarrito())}`,
+  ].join("\n");
+}
+
+function renderCarrito() {
+  const cantidadTotal = CARRITO.reduce((acc, item) => acc + item.cantidad, 0);
+  const countEl = document.getElementById("cartCount");
+  countEl.textContent = String(cantidadTotal);
+  countEl.hidden = cantidadTotal === 0;
+
+  document.getElementById("cartEmpty").hidden = CARRITO.length > 0;
+  document.getElementById("cartFooter").hidden = CARRITO.length === 0;
+
+  document.getElementById("cartItems").innerHTML = CARRITO.map(item => `
+    <div class="cart-item">
+      <img src="${item.imagen}" alt="${item.nombre}">
+      <div class="cart-item-body">
+        <span class="cart-item-name">${item.nombre}</span>
+        <span class="cart-item-price">${money.format(item.precio)}</span>
+        <div class="cart-item-qty">
+          <button class="qty-btn" data-action="menos" data-id="${item.id}" aria-label="Restar uno"><svg width="12" height="12" aria-hidden="true"><use href="#icon-minus"></use></svg></button>
+          <span>${item.cantidad}</span>
+          <button class="qty-btn" data-action="mas" data-id="${item.id}" aria-label="Sumar uno"><svg width="12" height="12" aria-hidden="true"><use href="#icon-plus"></use></svg></button>
+        </div>
+      </div>
+      <button class="cart-item-remove" data-id="${item.id}" aria-label="Quitar del carrito">✕</button>
+    </div>
+  `).join("");
+
+  document.querySelectorAll(".qty-btn").forEach(btn => {
+    btn.addEventListener("click", () => cambiarCantidad(btn.dataset.id, btn.dataset.action === "mas" ? 1 : -1));
+  });
+  document.querySelectorAll(".cart-item-remove").forEach(btn => {
+    btn.addEventListener("click", () => quitarDelCarrito(btn.dataset.id));
+  });
+
+  document.getElementById("cartTotal").textContent = money.format(totalCarrito());
+  document.getElementById("cartCheckout").href = `https://wa.me/${CONFIG.whatsapp}?text=${encodeURIComponent(mensajeCheckoutCarrito())}`;
+}
+
+function abrirCarrito() {
+  document.getElementById("cartDrawer").hidden = false;
+  document.getElementById("cartOverlay").hidden = false;
+  document.body.style.overflow = "hidden";
+}
+
+function cerrarCarrito() {
+  document.getElementById("cartDrawer").hidden = true;
+  document.getElementById("cartOverlay").hidden = true;
+  document.body.style.overflow = "";
+}
+
+document.getElementById("cartOpen").addEventListener("click", abrirCarrito);
+document.getElementById("cartClose").addEventListener("click", cerrarCarrito);
+document.getElementById("cartOverlay").addEventListener("click", cerrarCarrito);
+document.getElementById("cartEmptyLink").addEventListener("click", cerrarCarrito);
+document.getElementById("cartClear").addEventListener("click", vaciarCarrito);
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape" && !document.getElementById("cartDrawer").hidden) cerrarCarrito();
+});
+
+renderCarrito();
+
 // ---------- Videos (sección "Videos" del Home) ----------
+// Rectángulo grande con el video activo + pestañas de categoría + tira de
+// miniaturas para elegir otro video de esa misma categoría.
+let clipCategoriaActual = null;
+let clipActivoId = null;
+
 function renderClips() {
   const section = document.getElementById("clips");
   if (!CONFIG.clips || CONFIG.clips.length === 0) {
@@ -303,22 +457,51 @@ function renderClips() {
     return;
   }
   section.hidden = false;
-  document.getElementById("clipsGrid").innerHTML = CONFIG.clips.map(c => `
-    <a class="clip-card" href="${c.link || CONFIG.tiendaMercadoLibre}" target="_blank" rel="noopener">
-      ${c.video
-        ? `<video class="clip-media" src="${c.video}" poster="${c.poster || ""}" muted loop playsinline preload="metadata"></video>`
-        : `<img class="clip-media" src="${c.poster || ""}" alt="${c.titulo || ""}" loading="lazy">`}
-      <div class="clip-body">
-        <h3>${c.titulo || ""}</h3>
-        <p>${c.texto || ""}</p>
-        <span class="clip-cta">Ver más</span>
-      </div>
-    </a>
+
+  const clips = CONFIG.clips.map((c, i) => ({ ...c, id: c.id ?? String(i), categoria: c.categoria || "Videos" }));
+  const categorias = [...new Set(clips.map(c => c.categoria))];
+  if (!clipCategoriaActual || !categorias.includes(clipCategoriaActual)) {
+    clipCategoriaActual = categorias[0];
+  }
+
+  document.getElementById("clipsTabs").innerHTML = categorias.length <= 1 ? "" : categorias.map(cat => `
+    <button class="clips-tab ${cat === clipCategoriaActual ? "active" : ""}" data-cat="${cat}">${cat}</button>
   `).join("");
 
-  document.querySelectorAll(".clip-card video").forEach(video => {
-    video.addEventListener("mouseenter", () => video.play());
-    video.addEventListener("mouseleave", () => video.pause());
+  document.querySelectorAll(".clips-tab").forEach(btn => {
+    btn.addEventListener("click", () => {
+      clipCategoriaActual = btn.dataset.cat;
+      clipActivoId = null;
+      renderClips();
+    });
+  });
+
+  const clipsCategoria = clips.filter(c => c.categoria === clipCategoriaActual);
+  const activo = clipsCategoria.find(c => c.id === clipActivoId) || clipsCategoria[0];
+  clipActivoId = activo.id;
+
+  document.getElementById("clipsFeature").innerHTML = `
+    <div class="clips-feature-media">
+      ${activo.video
+        ? `<video src="${activo.video}" poster="${activo.poster || ""}" controls playsinline></video>`
+        : `<a href="${activo.link || CONFIG.tiendaMercadoLibre}" target="_blank" rel="noopener"><img src="${activo.poster || ""}" alt="${activo.titulo || ""}"></a>`}
+    </div>
+    <div class="clips-feature-body">
+      <h3>${activo.titulo || ""}</h3>
+      <p>${activo.texto || ""}</p>
+      <a class="secondary-btn" href="${activo.link || CONFIG.tiendaMercadoLibre}" target="_blank" rel="noopener">Ver más</a>
+    </div>
+  `;
+
+  document.getElementById("clipsRail").innerHTML = clipsCategoria.length <= 1 ? "" : clipsCategoria.map(c => `
+    <button class="clips-thumb ${c.id === activo.id ? "active" : ""}" data-id="${c.id}">
+      <img src="${c.poster || ""}" alt="${c.titulo || ""}">
+      <span>${c.titulo || ""}</span>
+    </button>
+  `).join("");
+
+  document.querySelectorAll(".clips-thumb").forEach(btn => {
+    btn.addEventListener("click", () => { clipActivoId = btn.dataset.id; renderClips(); });
   });
 }
 renderClips();
@@ -340,7 +523,6 @@ document.getElementById("footerWhatsapp").href = `https://wa.me/${CONFIG.whatsap
 
 document.getElementById("heroStoreLink").href = CONFIG.tiendaMercadoLibre;
 document.getElementById("heroWhatsappQuote").href = `https://wa.me/${CONFIG.whatsapp}?text=${encodeURIComponent("Hola Sanitarios PCH, quiero pedir un presupuesto.")}`;
-document.getElementById("heroWhatsappListing").href = `https://wa.me/${CONFIG.whatsapp}?text=${encodeURIComponent("Hola Sanitarios PCH, quiero pedirte que me ayudes a armar una publicación en Mercado Libre.")}`;
 document.getElementById("infoWhatsapp").href = `https://wa.me/${CONFIG.whatsapp}?text=${encodeURIComponent("Hola Sanitarios PCH, tengo una consulta.")}`;
 
 document.getElementById("drawerContacto").href = `https://wa.me/${CONFIG.whatsapp}?text=${encodeURIComponent("Hola Sanitarios PCH, tengo una consulta.")}`;
