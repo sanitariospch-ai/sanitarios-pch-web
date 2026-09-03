@@ -30,16 +30,16 @@ const CONFIG = {
   // vacía todos caen en una única pestaña "Videos"), poster (imagen), video
   // (opcional, .mp4), link (opcional).
   clips: [
-    { hook: "¿SE TE ROMPIÓ LA MANGUERA DE AGUA?", titulo: "Flexibles de agua Tecnoform",
+    { hook: "¿SE TE ROMPIÓ EL FLEXIBLE DE AGUA?", titulo: "Flexibles de agua Tecnoform",
       texto: "Conexión de 1/2\" y 3/4\" en distintos largos, en acero inoxidable premium. Para canillas, inodoros y artefactos de baño y cocina.",
       categoria: "Flexibles de Agua", poster: "videos/posters/flexibles-de-agua.jpg", video: "videos/flexibles-de-agua.mp4" },
     { hook: "CONEXIÓN DE GAS SEGURA Y APROBADA", titulo: "Flexibles de gas Tecnoform",
       texto: "Aprobados para gas natural o envasado. Medida fija o extensible, elegí el largo que necesitás.",
       categoria: "Flexibles de Gas", poster: "videos/posters/flexibles-de-gas.jpg", video: "videos/flexibles-de-gas.mp4" },
-    { hook: "¿PÉRDIDAS EN EL DESAGÜE DE LA BACHA?", titulo: "Sopapa de desagüe para bacha",
+    { hook: "SOPAPA DE BACHA CON CESTILLO", titulo: "Sopapa de desagüe para bacha",
       texto: "Sopapa de desagüe de 9cm para bacha, fácil de instalar.",
       categoria: "Sopapa Bacha", poster: "videos/posters/desagua-sopapa-bacha.jpg", video: "videos/desagua-sopapa-bacha.mp4" },
-    { hook: "¿LA MOCHILA DEL INODORO NO CORTA EL AGUA?", titulo: "Flotantes para tanque de agua",
+    { hook: "¿SE TE ROMPIÓ EL FLOTANTE DEL TANQUE?", titulo: "Flotantes para tanque de agua",
       texto: "Disponibles en 1/2\", 3/4\" y 1\" para regular el nivel de agua del tanque.",
       categoria: "Flotantes", poster: "videos/posters/flotantes.jpg", video: "videos/flotantes.mp4" },
     { hook: "INSTALÁ TU INODORO SIN VUELTAS", titulo: "Fuelles conectores Gon-Ren",
