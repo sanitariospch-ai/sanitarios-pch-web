@@ -36,6 +36,19 @@
     </symbol>
   </svg>
 
+  <div class="ticker" aria-hidden="true">
+    <div class="ticker-track">
+      <span class="ticker-item">SANITARIOS PCH</span>
+      <span class="ticker-item">ARMÁ TU CARRITO · 10% OFF</span>
+      <span class="ticker-item">10% OFF CON TRANSFERENCIA</span>
+      <span class="ticker-item">ENVÍOS A TODO EL PAÍS</span>
+      <span class="ticker-item">SANITARIOS PCH</span>
+      <span class="ticker-item">ARMÁ TU CARRITO · 10% OFF</span>
+      <span class="ticker-item">10% OFF CON TRANSFERENCIA</span>
+      <span class="ticker-item">ENVÍOS A TODO EL PAÍS</span>
+    </div>
+  </div>
+
   <div class="drawer-overlay" id="drawerOverlay" hidden></div>
   <nav class="drawer" id="drawer" hidden aria-label="Menú principal">
     <div class="drawer-head">
@@ -83,7 +96,7 @@
   <div class="drawer-overlay" id="cartOverlay" hidden></div>
   <aside class="cart-drawer" id="cartDrawer" hidden aria-label="Carrito de compras">
     <div class="drawer-head">
-      <span class="drawer-title">Tu carrito</span>
+      <span class="drawer-title" id="cartDrawerTitle">Tu carrito</span>
       <button class="drawer-close" id="cartClose" aria-label="Cerrar carrito">✕</button>
     </div>
     <div class="cart-items" id="cartItems"></div>
@@ -92,13 +105,66 @@
       <a href="#productos" id="cartEmptyLink" class="secondary-btn">Ver productos</a>
     </div>
     <div class="cart-footer" id="cartFooter" hidden>
+      <p class="cart-discount-note">10% OFF comprando por la web (pago por transferencia). Ya aplicado en los precios de arriba.</p>
       <div class="cart-total">
         <span>Total</span>
         <strong id="cartTotal">$ 0</strong>
       </div>
-      <a class="primary-btn cart-checkout" id="cartCheckout" href="#" target="_blank" rel="noopener">Finalizar compra por WhatsApp</a>
+      <button type="button" class="primary-btn cart-checkout" id="cartCheckout">Finalizar compra por WhatsApp</button>
       <button class="cart-clear" id="cartClear">Vaciar carrito</button>
     </div>
+    <form class="cart-checkout-form" id="cartCheckoutForm" hidden>
+      <button type="button" class="cart-form-back" id="cartFormBack">‹ Volver al carrito</button>
+      <p class="cart-form-intro">Completá tus datos y te escribimos por WhatsApp para coordinar la entrega y el pago.</p>
+      <div class="cart-form-summary" id="cartFormSummary"></div>
+      <label class="cart-form-field">
+        Nombre y apellido / Empresa
+        <input type="text" id="checkoutNombre" required autocomplete="name">
+      </label>
+      <label class="cart-form-field">
+        Provincia
+        <select id="checkoutProvincia" required autocomplete="address-level1">
+          <option value="" disabled selected>Elegí tu provincia</option>
+          <option>Buenos Aires</option>
+          <option>CABA</option>
+          <option>Catamarca</option>
+          <option>Chaco</option>
+          <option>Chubut</option>
+          <option>Córdoba</option>
+          <option>Corrientes</option>
+          <option>Entre Ríos</option>
+          <option>Formosa</option>
+          <option>Jujuy</option>
+          <option>La Pampa</option>
+          <option>La Rioja</option>
+          <option>Mendoza</option>
+          <option>Misiones</option>
+          <option>Neuquén</option>
+          <option>Río Negro</option>
+          <option>Salta</option>
+          <option>San Juan</option>
+          <option>San Luis</option>
+          <option>Santa Cruz</option>
+          <option>Santa Fe</option>
+          <option>Santiago del Estero</option>
+          <option>Tierra del Fuego</option>
+          <option>Tucumán</option>
+        </select>
+      </label>
+      <label class="cart-form-field">
+        Localidad
+        <input type="text" id="checkoutLocalidad" required autocomplete="address-level2">
+      </label>
+      <label class="cart-form-field">
+        Dirección
+        <input type="text" id="checkoutDireccion" required autocomplete="street-address">
+      </label>
+      <label class="cart-form-field">
+        Teléfono
+        <input type="tel" id="checkoutTelefono" required autocomplete="tel">
+      </label>
+      <button type="submit" class="primary-btn cart-checkout">Confirmar pedido por WhatsApp</button>
+    </form>
   </aside>
 
   <main>
