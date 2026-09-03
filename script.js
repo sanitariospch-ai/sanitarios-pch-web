@@ -31,25 +31,25 @@ const CONFIG = {
   // (opcional, .mp4), link (opcional).
   clips: [
     { hook: "¿SE TE ROMPIÓ LA MANGUERA DE AGUA?", titulo: "Flexibles de agua Tecnoform",
-      texto: "Conexión de 1/2\" en distintos largos, en acero inoxidable premium. Para canillas, inodoros y artefactos de baño y cocina.",
+      texto: "Conexión de 1/2\" y 3/4\" en distintos largos, en acero inoxidable premium. Para canillas, inodoros y artefactos de baño y cocina.",
       categoria: "Flexibles de Agua", poster: "videos/posters/flexibles-de-agua.jpg", video: "videos/flexibles-de-agua.mp4" },
     { hook: "CONEXIÓN DE GAS SEGURA Y APROBADA", titulo: "Flexibles de gas Tecnoform",
       texto: "Aprobados para gas natural o envasado. Medida fija o extensible, elegí el largo que necesitás.",
       categoria: "Flexibles de Gas", poster: "videos/posters/flexibles-de-gas.jpg", video: "videos/flexibles-de-gas.mp4" },
     { hook: "¿PÉRDIDAS EN EL DESAGÜE DE LA BACHA?", titulo: "Sopapa de desagüe para bacha",
-      texto: "Repuesto de desagüe de 1 1/4\" para bacha, fácil de instalar.",
-      categoria: "Desagües", poster: "videos/posters/desagua-sopapa-bacha.jpg", video: "videos/desagua-sopapa-bacha.mp4" },
-    { hook: "¿LA MOCHILA DEL INODORO NO CORTA EL AGUA?", titulo: "Varillas de flotante para mochila",
-      texto: "Varillas en distintos largos para regular el nivel de agua del tanque.",
+      texto: "Sopapa de desagüe de 9cm para bacha, fácil de instalar.",
+      categoria: "Sopapa Bacha", poster: "videos/posters/desagua-sopapa-bacha.jpg", video: "videos/desagua-sopapa-bacha.mp4" },
+    { hook: "¿LA MOCHILA DEL INODORO NO CORTA EL AGUA?", titulo: "Flotantes para tanque de agua",
+      texto: "Disponibles en 1/2\", 3/4\" y 1\" para regular el nivel de agua del tanque.",
       categoria: "Flotantes", poster: "videos/posters/flotantes.jpg", video: "videos/flotantes.mp4" },
     { hook: "INSTALÁ TU INODORO SIN VUELTAS", titulo: "Fuelles conectores Gon-Ren",
-      texto: "Conectores para inodoro con tuerca, para mochila de colgar flexible o descarga de pared. Instalación en 3 pasos.",
+      texto: "Conectores para inodoro con tuerca en 3 modelos: descarga de pared, mochila de colgar flexible y mochila de colgar codo rígido. Instalación en 3 pasos.",
       categoria: "Fuelles", poster: "videos/posters/fuelles-inodoro.jpg", video: "videos/fuelles-inodoro.mp4" },
     { hook: "SUJECIÓN FIRME PARA TUS CAÑOS", titulo: "Grampas Magari",
       texto: "Abrazaderas para fijar cañerías de forma segura y prolija.",
       categoria: "Grampas", poster: "videos/posters/grampas-magari.jpg", video: "videos/grampas-magari.mp4" },
     { hook: "SIFÓN CON TRIPLE ACCESO", titulo: "Sifones frontales Gon-Ren",
-      texto: "Sifón doble o simple. Instalación a bacha, a pared o para lavarropas. Industria argentina.",
+      texto: "Sifón doble o simple, de triple acceso. Instalación a bacha, a pared o para lavarropas. Industria argentina.",
       categoria: "Sifones", poster: "videos/posters/sifones-gon-ren.jpg", video: "videos/sifones-gon-ren.mp4" },
   ],
 };
@@ -62,7 +62,7 @@ const WHATSAPP_ICON_SVG = '<svg width="18" height="18" fill="currentColor" aria-
 
 // Cuántos productos se muestran antes de que aparezca "Ver más productos".
 // Subí o bajá este número si querés que se vean más o menos de entrada.
-const PRODUCTOS_POR_TANDA = 8;
+const PRODUCTOS_POR_TANDA = 5;
 
 let PRODUCTOS = [];
 let categoriaActual = "Todos";

@@ -14,6 +14,11 @@
     <symbol id="icon-whatsapp" viewBox="0 0 24 24">
       <path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.77.46 3.45 1.32 4.94L2 22l5.25-1.38a9.86 9.86 0 0 0 4.79 1.22h.01c5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2Zm0 1.67c2.19 0 4.25.85 5.8 2.4a8.15 8.15 0 0 1 2.4 5.81c0 4.53-3.68 8.21-8.2 8.21a8.2 8.2 0 0 1-4.18-1.14l-.3-.18-3.12.82.83-3.04-.2-.31a8.15 8.15 0 0 1-1.26-4.37c0-4.53 3.69-8.2 8.23-8.2Zm-4.5 4.4c-.16 0-.42.06-.64.31-.22.25-.85.83-.85 2.03 0 1.2.87 2.35.99 2.51.12.16 1.7 2.72 4.19 3.71 2.07.82 2.49.66 2.94.62.45-.04 1.45-.59 1.65-1.16.2-.57.2-1.06.14-1.16-.06-.1-.22-.16-.46-.28-.24-.12-1.45-.72-1.68-.8-.22-.08-.39-.12-.55.12-.16.24-.63.8-.78.96-.14.16-.28.18-.52.06-.24-.12-1.02-.38-1.94-1.2-.72-.64-1.2-1.44-1.34-1.68-.14-.24-.02-.37.11-.49.11-.11.24-.28.36-.42.12-.14.16-.24.24-.4.08-.16.04-.3-.02-.42-.06-.12-.55-1.34-.76-1.83-.2-.48-.4-.42-.55-.42Z"/>
     </symbol>
+    <symbol id="icon-info" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="9"></circle>
+      <line x1="12" y1="11" x2="12" y2="16.5"></line>
+      <circle cx="12" cy="7.5" r="1" fill="currentColor" stroke="none"></circle>
+    </symbol>
     <symbol id="icon-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
       <circle cx="11" cy="11" r="7"></circle>
       <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
@@ -177,40 +182,30 @@
   <main>
     <section class="hero">
       <div class="container hero-inner">
-        <h1>Todo para tu baño, cocina y lavadero</h1>
-        <p>Encontrá nuestros productos y comprá de forma segura directamente desde Mercado Libre.</p>
+        <div class="hero-copy">
+          <h1>Todo para tu baño, cocina y lavadero</h1>
+          <p>Encontrá nuestros productos y comprá de forma segura directamente desde Mercado Libre.</p>
+        </div>
         <div class="hero-actions">
-          <a href="#productos" class="primary-btn">Ver productos</a>
-          <a href="#info" class="secondary-btn">Cómo comprar</a>
+          <a href="#info" class="hero-btn">
+            <svg width="18" height="18" aria-hidden="true"><use href="#icon-info"></use></svg>
+            Cómo comprar
+          </a>
+          <a href="#" id="heroStoreLink" class="hero-btn" target="_blank" rel="noopener">
+            <svg width="18" height="18" aria-hidden="true"><use href="#icon-mercadolibre"></use></svg>
+            Comprá en Mercado Libre
+          </a>
+          <a href="#" id="heroWhatsappQuote" class="hero-btn" target="_blank" rel="noopener">
+            <svg width="18" height="18" fill="currentColor" aria-hidden="true"><use href="#icon-whatsapp"></use></svg>
+            Pedí tu presupuesto por WhatsApp
+          </a>
+          <a href="#productos" id="heroCartCta" class="hero-btn">
+            <svg width="18" height="18" aria-hidden="true"><use href="#icon-cart"></use></svg>
+            Comprá mediante la web
+          </a>
         </div>
       </div>
     </section>
-
-    <div class="trust-strip">
-      <div class="container trust-strip-inner">
-        <a class="trust-item" href="#" id="heroStoreLink" target="_blank" rel="noopener">
-          <span class="hc-icon">🛒</span>
-          <span>
-            <b>Comprá en Mercado Libre</b>
-            <small>Publicaciones, pagos y envíos gestionados por Mercado Libre.</small>
-          </span>
-        </a>
-        <a class="trust-item" href="#" id="heroWhatsappQuote" target="_blank" rel="noopener">
-          <span class="hc-icon hc-icon--wa"><svg width="18" height="18" fill="currentColor" aria-hidden="true"><use href="#icon-whatsapp"></use></svg></span>
-          <span>
-            <b>Pedí tu presupuesto por WhatsApp</b>
-            <small>Consultá precios y coordiná tu compra. Envíos a todo el país.</small>
-          </span>
-        </a>
-        <a class="trust-item" href="#productos" id="heroCartCta">
-          <span class="hc-icon"><svg width="18" height="18" aria-hidden="true"><use href="#icon-cart"></use></svg></span>
-          <span>
-            <b>Comprá mediante la web</b>
-            <small>Armá tu carrito acá y coordinamos la compra por WhatsApp.</small>
-          </span>
-        </a>
-      </div>
-    </div>
 
     <section class="catalog container" id="productos">
       <div class="section-top">
