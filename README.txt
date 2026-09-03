@@ -81,6 +81,19 @@ para empezar. El carrito:
 No hay nada más que configurar para que funcione — ya usa `CONFIG.whatsapp`
 y los datos de cada producto de la planilla.
 
+## Datos para Google (SEO)
+
+Cada vez que se cargan los productos, la página le pasa a Google en un
+formato que entiende (JSON-LD, no se ve en pantalla) el nombre, precio,
+categoría, foto y si hay stock de cada uno, más el link real de Mercado
+Libre para comprarlo. Esto no garantiza aparecer en los resultados, pero
+ayuda a que Google entienda mejor qué vendés. No hay nada que configurar:
+se arma solo a partir de la misma planilla de productos.
+
+Lo que más influye para aparecer cuando alguien busca un producto sigue
+siendo el texto de la columna **Descripcion** de la planilla: cuanto más
+se parezca a como la gente busca (marca, medida, uso), mejor.
+
 ## Destacados (franja arriba de "Videos")
 
 Agregá una columna **"Destacado"** (Si / No) en tu planilla de productos.
