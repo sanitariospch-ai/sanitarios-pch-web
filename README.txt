@@ -7,6 +7,11 @@ Esta es una primera versión de una web catálogo para mostrar productos y envia
 - index.html: estructura de la página
 - style.css: diseño
 - script.js: productos, precios, imágenes, links y WhatsApp
+- logo.png / favicon.png: tu logo (en el header y en la solapa del navegador)
+- og-image.png: versión grande de tu logo que usan Google, WhatsApp, etc. para
+  mostrar una imagen cuando alguien busca la página o comparte el link. Si
+  cambiás el logo, actualizá estos 3 archivos con la misma imagen (podés
+  pedirme que los regenere a partir de una versión en alta calidad).
 
 ## Cómo cargar tus productos
 
