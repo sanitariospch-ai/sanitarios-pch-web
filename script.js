@@ -58,7 +58,6 @@ const CONFIG = {
 // Columnas esperadas en la planilla: Codigo, Nombre Publicacion, Precio Web, Categoria, Foto, Foto 2, Foto 3, Foto 4, Descripcion, Link Mercado Libre, Mostrar
 // La columna "Mostrar" acepta 3 valores: Si (se ve normal), No (no aparece en la web) y Sin Stock
 // (aparece igual pero con la etiqueta "Sin stock" y el WhatsApp pregunta por el reingreso).
-const WHATSAPP_ICON_SVG = '<svg width="18" height="18" fill="currentColor" aria-hidden="true"><use href="#icon-whatsapp"></use></svg>';
 
 // Cuántos productos se muestran antes de que aparezca "Ver más productos".
 // Subí o bajá este número si querés que se vean más o menos de entrada.
@@ -244,7 +243,6 @@ function productCardHTML(p, index) {
             ? `<a class="buy" href="${p.link}" target="_blank" rel="noopener" onclick="event.stopPropagation()">Comprar</a>`
             : `<button class="cart-add" data-id="${idProducto(p)}" onclick="event.stopPropagation()"><svg width="16" height="16" aria-hidden="true"><use href="#icon-cart"></use></svg>Agregar al carrito</button>
                <a class="buy-ml" href="${p.link}" target="_blank" rel="noopener" title="Comprar en Mercado Libre" onclick="event.stopPropagation()"><img class="ml-logo" src="mercadolibre-logo.png" width="20" height="20" alt="Mercado Libre"></a>`}
-          <a class="consult" href="${whatsappLink(p)}" target="_blank" rel="noopener" title="${p.sinStock ? "Consultar por nuevo stock" : "Consultar por WhatsApp"}" onclick="event.stopPropagation()">${WHATSAPP_ICON_SVG}</a>
         </div>
       </div>
     </article>
