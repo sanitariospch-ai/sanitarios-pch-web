@@ -715,7 +715,7 @@ function renderClips() {
   document.getElementById("clipsFeature").innerHTML = `
     <div class="clips-feature-media">
       ${activo.video
-        ? `<video src="${activo.video}" poster="${activo.poster || ""}" controls playsinline></video>`
+        ? `<video src="${activo.video}" poster="${activo.poster || ""}" autoplay muted loop playsinline controls></video>`
         : `<a href="${activo.link || CONFIG.tiendaMercadoLibre}" target="_blank" rel="noopener"><img src="${activo.poster || ""}" alt="${activo.titulo || ""}"></a>`}
     </div>
     <div class="clips-feature-body">
