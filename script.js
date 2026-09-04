@@ -243,7 +243,7 @@ function productCardHTML(p, index) {
           ${p.sinStock
             ? `<a class="buy" href="${p.link}" target="_blank" rel="noopener" onclick="event.stopPropagation()">Comprar</a>`
             : `<button class="cart-add" data-id="${idProducto(p)}" onclick="event.stopPropagation()"><svg width="16" height="16" aria-hidden="true"><use href="#icon-cart"></use></svg>Agregar al carrito</button>
-               <a class="buy-ml" href="${p.link}" target="_blank" rel="noopener" title="Comprar en Mercado Libre" onclick="event.stopPropagation()"><svg width="18" height="18" aria-hidden="true"><use href="#icon-mercadolibre"></use></svg></a>`}
+               <a class="buy-ml" href="${p.link}" target="_blank" rel="noopener" title="Comprar en Mercado Libre" onclick="event.stopPropagation()"><img class="ml-logo" src="mercadolibre-logo.png" width="20" height="20" alt="Mercado Libre"></a>`}
           <a class="consult" href="${whatsappLink(p)}" target="_blank" rel="noopener" title="${p.sinStock ? "Consultar por nuevo stock" : "Consultar por WhatsApp"}" onclick="event.stopPropagation()">${WHATSAPP_ICON_SVG}</a>
         </div>
       </div>
@@ -341,7 +341,7 @@ function abrirFicha(p) {
   } else {
     modalComprarBtn.className = "buy-ml";
     modalComprarBtn.title = "Comprar en Mercado Libre";
-    modalComprarBtn.innerHTML = '<svg width="18" height="18" aria-hidden="true"><use href="#icon-mercadolibre"></use></svg>';
+    modalComprarBtn.innerHTML = '<img class="ml-logo" src="mercadolibre-logo.png" width="20" height="20" alt="Mercado Libre">';
   }
 
   renderFichaFoto();

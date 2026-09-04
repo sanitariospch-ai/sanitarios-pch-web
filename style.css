@@ -260,6 +260,7 @@ h2 { font-size:28px; letter-spacing:-0.5px; margin:0; }
   text-decoration:none; color:#183b3f;
 }
 .buy-ml:hover { background:#f2f4f2; }
+.ml-logo { display:block; flex:none; object-fit:contain; }
 .empty { text-align:center; padding:50px; color:#5c6568; }
 .loading-msg { grid-column:1/-1; text-align:center; padding:50px; color:#5c6568; }
 .load-more-wrap { text-align:center; margin-top:32px; }
