@@ -145,54 +145,82 @@
     </div>
     <form class="cart-checkout-form" id="cartCheckoutForm" hidden>
       <button type="button" class="cart-form-back" id="cartFormBack">‹ Volver al carrito</button>
-      <p class="cart-form-intro">Completá tus datos y te escribimos por WhatsApp para coordinar la entrega y el pago.</p>
+      <p class="cart-form-intro">Completá tus datos y confirmá el pedido por WhatsApp para coordinar la entrega y el pago.</p>
       <div class="cart-form-summary" id="cartFormSummary"></div>
       <label class="cart-form-field">
         Nombre y apellido / Empresa
         <input type="text" id="checkoutNombre" required autocomplete="name">
       </label>
-      <label class="cart-form-field">
-        Provincia
-        <select id="checkoutProvincia" required autocomplete="address-level1">
-          <option value="" disabled selected>Elegí tu provincia</option>
-          <option>Buenos Aires</option>
-          <option>CABA</option>
-          <option>Catamarca</option>
-          <option>Chaco</option>
-          <option>Chubut</option>
-          <option>Córdoba</option>
-          <option>Corrientes</option>
-          <option>Entre Ríos</option>
-          <option>Formosa</option>
-          <option>Jujuy</option>
-          <option>La Pampa</option>
-          <option>La Rioja</option>
-          <option>Mendoza</option>
-          <option>Misiones</option>
-          <option>Neuquén</option>
-          <option>Río Negro</option>
-          <option>Salta</option>
-          <option>San Juan</option>
-          <option>San Luis</option>
-          <option>Santa Cruz</option>
-          <option>Santa Fe</option>
-          <option>Santiago del Estero</option>
-          <option>Tierra del Fuego</option>
-          <option>Tucumán</option>
-        </select>
-      </label>
-      <label class="cart-form-field">
-        Localidad
-        <input type="text" id="checkoutLocalidad" required autocomplete="address-level2">
-      </label>
-      <label class="cart-form-field">
-        Dirección
-        <input type="text" id="checkoutDireccion" required autocomplete="street-address">
-      </label>
+      <div class="cart-form-field">
+        <span class="cart-form-label">Entrega</span>
+        <div class="cart-form-toggle" id="checkoutEntregaGroup">
+          <label class="cart-form-toggle-option">
+            <input type="radio" name="checkoutEntrega" value="Retirar por el local" required>
+            <span>Retirar por el local</span>
+          </label>
+          <label class="cart-form-toggle-option">
+            <input type="radio" name="checkoutEntrega" value="Envío a domicilio" required>
+            <span>Envío a domicilio</span>
+          </label>
+        </div>
+      </div>
+      <div id="checkoutDireccionFields">
+        <label class="cart-form-field">
+          Provincia
+          <select id="checkoutProvincia" autocomplete="address-level1">
+            <option value="" disabled selected>Elegí tu provincia</option>
+            <option>Buenos Aires</option>
+            <option>CABA</option>
+            <option>Catamarca</option>
+            <option>Chaco</option>
+            <option>Chubut</option>
+            <option>Córdoba</option>
+            <option>Corrientes</option>
+            <option>Entre Ríos</option>
+            <option>Formosa</option>
+            <option>Jujuy</option>
+            <option>La Pampa</option>
+            <option>La Rioja</option>
+            <option>Mendoza</option>
+            <option>Misiones</option>
+            <option>Neuquén</option>
+            <option>Río Negro</option>
+            <option>Salta</option>
+            <option>San Juan</option>
+            <option>San Luis</option>
+            <option>Santa Cruz</option>
+            <option>Santa Fe</option>
+            <option>Santiago del Estero</option>
+            <option>Tierra del Fuego</option>
+            <option>Tucumán</option>
+          </select>
+        </label>
+        <label class="cart-form-field">
+          Localidad
+          <input type="text" id="checkoutLocalidad" autocomplete="address-level2">
+        </label>
+        <label class="cart-form-field">
+          Dirección
+          <input type="text" id="checkoutDireccion" autocomplete="street-address">
+        </label>
+      </div>
       <label class="cart-form-field">
         Teléfono
         <input type="tel" id="checkoutTelefono" required autocomplete="tel">
       </label>
+      <div class="cart-form-field">
+        <span class="cart-form-label">Facturación</span>
+        <div class="cart-form-toggle" id="checkoutFacturaGroup">
+          <label class="cart-form-toggle-option">
+            <input type="radio" name="checkoutFactura" value="Consumidor Final" required>
+            <span>Consumidor Final</span>
+          </label>
+          <label class="cart-form-toggle-option">
+            <input type="radio" name="checkoutFactura" value="Factura" required>
+            <span>Factura</span>
+          </label>
+        </div>
+      </div>
       <button type="submit" class="primary-btn cart-checkout">Confirmar pedido por WhatsApp</button>
     </form>
   </aside>

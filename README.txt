@@ -72,11 +72,13 @@ para empezar. El carrito:
 - No se ofrece para productos "Sin Stock" (no tendría sentido armar un
   pedido de algo que no hay).
 - Antes de mandar el pedido, pide los datos del cliente: **Nombre y
-  apellido/Empresa, Provincia, Localidad, Dirección y Teléfono**. Al
-  confirmar, arma un mensaje con esos datos + el detalle del pedido
-  (productos, cantidades y total con el 10% OFF ya aplicado) y lo manda a
-  tu WhatsApp para que coordines la entrega y el pago. El navegador
-  recuerda los datos para la próxima vez que ese mismo visitante compre.
+  apellido/Empresa, si retira por el local o pide envío a domicilio
+  (con Provincia, Localidad y Dirección solo si es envío), Teléfono y si
+  necesita Factura o es Consumidor Final**. Al confirmar, arma un mensaje
+  con esos datos + el detalle del pedido (productos, cantidades y total
+  con el 10% OFF ya aplicado) y lo manda a tu WhatsApp para que coordines
+  la entrega y el pago. El navegador recuerda los datos para la próxima
+  vez que ese mismo visitante compre.
 
 No hay nada más que configurar para que funcione — ya usa `CONFIG.whatsapp`
 y los datos de cada producto de la planilla.

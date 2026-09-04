@@ -504,6 +504,7 @@ function mensajeCheckoutCarrito(datos) {
   const lineas = CARRITO.map(item =>
     `- ${item.cantidad} x ${item.nombre} (${money.format(precioConDescuentoWeb(item.precio))} c/u con 10% OFF)`
   );
+  const esEnvio = datos.entrega === "Envío a domicilio";
   return [
     "Hola Sanitarios PCH, quiero hacer este pedido:",
     ...lineas,
@@ -511,10 +512,14 @@ function mensajeCheckoutCarrito(datos) {
     "",
     "Mis datos:",
     `Nombre y apellido/Empresa: ${datos.nombre}`,
-    `Provincia: ${datos.provincia}`,
-    `Localidad: ${datos.localidad}`,
-    `Dirección: ${datos.direccion}`,
+    `Entrega: ${datos.entrega}`,
+    ...(esEnvio ? [
+      `Provincia: ${datos.provincia}`,
+      `Localidad: ${datos.localidad}`,
+      `Dirección: ${datos.direccion}`,
+    ] : []),
     `Teléfono: ${datos.telefono}`,
+    `Facturación: ${datos.factura}`,
   ].join("\n");
 }
 
@@ -598,6 +603,20 @@ function guardarDatosCheckout(datos) {
   }
 }
 
+// Muestra u oculta Provincia/Localidad/Dirección según si el pedido es para
+// retirar por el local (no hace falta dirección) o para enviar a domicilio.
+function actualizarCamposDireccion() {
+  const entrega = document.querySelector('input[name="checkoutEntrega"]:checked');
+  const esEnvio = entrega ? entrega.value === "Envío a domicilio" : true;
+  const campos = document.getElementById("checkoutDireccionFields");
+  campos.hidden = !esEnvio;
+  document.getElementById("checkoutProvincia").required = esEnvio;
+  document.getElementById("checkoutLocalidad").required = esEnvio;
+  document.getElementById("checkoutDireccion").required = esEnvio;
+}
+
+document.getElementById("checkoutEntregaGroup").addEventListener("change", actualizarCamposDireccion);
+
 // Cambia el panel del carrito al formulario de datos, precargando lo que
 // el cliente haya cargado en una compra anterior (si el navegador lo guardó).
 function abrirFormularioCheckout() {
@@ -607,6 +626,13 @@ function abrirFormularioCheckout() {
   document.getElementById("checkoutLocalidad").value = datos.localidad || "";
   document.getElementById("checkoutDireccion").value = datos.direccion || "";
   document.getElementById("checkoutTelefono").value = datos.telefono || "";
+  document.querySelectorAll('input[name="checkoutEntrega"]').forEach(input => {
+    input.checked = input.value === datos.entrega;
+  });
+  document.querySelectorAll('input[name="checkoutFactura"]').forEach(input => {
+    input.checked = input.value === datos.factura;
+  });
+  actualizarCamposDireccion();
 
   const cantidadTotal = CARRITO.reduce((acc, item) => acc + item.cantidad, 0);
   document.getElementById("cartFormSummary").innerHTML = `
@@ -632,12 +658,16 @@ document.getElementById("cartFormBack").addEventListener("click", volverAlCarrit
 
 document.getElementById("cartCheckoutForm").addEventListener("submit", (e) => {
   e.preventDefault();
+  const entrega = document.querySelector('input[name="checkoutEntrega"]:checked');
+  const factura = document.querySelector('input[name="checkoutFactura"]:checked');
   const datos = {
     nombre: document.getElementById("checkoutNombre").value.trim(),
+    entrega: entrega ? entrega.value : "",
     provincia: document.getElementById("checkoutProvincia").value,
     localidad: document.getElementById("checkoutLocalidad").value.trim(),
     direccion: document.getElementById("checkoutDireccion").value.trim(),
     telefono: document.getElementById("checkoutTelefono").value.trim(),
+    factura: factura ? factura.value : "",
   };
   guardarDatosCheckout(datos);
   const url = `https://wa.me/${CONFIG.whatsapp}?text=${encodeURIComponent(mensajeCheckoutCarrito(datos))}`;

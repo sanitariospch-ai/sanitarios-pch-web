@@ -169,6 +169,19 @@ body {
 .cart-form-field input:focus, .cart-form-field select:focus { border-color:#183b3f; }
 .cart-checkout-form .cart-checkout { margin-top:4px; }
 
+#checkoutDireccionFields:not([hidden]) { display:flex; flex-direction:column; gap:14px; }
+.cart-form-toggle { display:flex; gap:8px; }
+.cart-form-toggle-option {
+  position:relative; flex:1; display:flex; align-items:center; justify-content:center;
+  padding:10px 8px; border:1px solid #d9ddda; border-radius:8px; cursor:pointer;
+  font-size:13px; font-weight:600; color:#445052; text-align:center;
+  transition:background .15s ease, color .15s ease, border-color .15s ease;
+}
+.cart-form-toggle-option input {
+  position:absolute; opacity:0; width:0; height:0; pointer-events:none;
+}
+.cart-form-toggle-option:has(input:checked) { background:#183b3f; color:#fff; border-color:#183b3f; }
+
 .hero {
   background: linear-gradient(160deg, #eef6f1 0%, #dfeee5 55%, #d3e9dd 100%);
   padding: 48px 0 44px;
