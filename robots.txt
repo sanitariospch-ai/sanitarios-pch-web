@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://sanitariospch-ai.github.io/sanitarios-pch-web/sitemap.xml
+Sitemap: https://sanitariospch.com/sitemap.xml
