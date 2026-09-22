@@ -34,6 +34,25 @@ Columnas de la planilla:
 
 Al hacer clic en un producto se abre una ficha con todas sus fotos (se navega con flechas o puntitos) y la descripción.
 
+## Mandar el link directo de un producto o una categoría
+
+En la ficha de cada producto (al hacer clic en uno) hay un botón "Compartir"
+(el ícono al lado del de WhatsApp). En el celular abre el menú para mandarlo
+directo por WhatsApp; en la compu, copia el link para pegarlo donde haga
+falta. Ese link abre la página directo con la ficha de ese producto ya
+abierta.
+
+También funciona con categorías: mientras estás filtrando por una categoría
+(desde el menú ☰ → Categorías), la barra de direcciones va cambiando sola,
+así que copiándola desde ahí también mandás un link directo a esa categoría
+filtrada.
+
+Ojo: como todo el catálogo vive en una sola página, la vista previa que arma
+WhatsApp al pegar el link (la fotito y el título que aparecen antes de
+enviar) va a mostrar el logo y la descripción general del sitio, no la foto
+ni el precio de ese producto puntual — pero al tocarlo, a la persona que lo
+recibe sí se le abre la página directo en la ficha de ese producto.
+
 También cambiá en `script.js`:
 
 - `CONFIG.tiendaMercadoLibre` por el link de tu tienda.

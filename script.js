@@ -140,6 +140,7 @@ async function cargarProductos() {
     renderProducts();
     renderDestacados();
     actualizarDatosEstructurados();
+    aplicarLinkInicial();
   } catch (err) {
     console.error("Error cargando productos desde Google Sheets:", err);
     grid.innerHTML = `<p class="loading-msg">No pudimos cargar los productos en este momento. Probá de nuevo más tarde.</p>`;
@@ -187,6 +188,57 @@ function idProducto(p) {
   return p.codigo || p.nombre;
 }
 
+// ---------- Links directos a un producto o una categoría ----------
+// Mientras se navega, la URL de la página se actualiza sola (sin recargar)
+// para reflejar lo que se está viendo. Así, copiando el link de la barra de
+// direcciones (o con el botón "Compartir" de la ficha) se puede mandar un
+// link directo a un producto puntual o a una categoría filtrada.
+function actualizarURL(params) {
+  const url = new URL(location.href);
+  url.search = "";
+  Object.entries(params).forEach(([key, value]) => {
+    if (value) url.searchParams.set(key, value);
+  });
+  history.replaceState(null, "", url.pathname + url.search);
+}
+
+function linkProducto(p) {
+  const url = new URL(location.href);
+  url.search = "";
+  url.searchParams.set("p", idProducto(p));
+  return url.toString();
+}
+
+// Busca, entre los productos cargados, uno cuyo Código o Nombre coincida
+// (sin importar mayúsculas/minúsculas) con el identificador del link.
+function buscarProductoPorId(id) {
+  const idNormalizado = id.trim().toLowerCase();
+  return PRODUCTOS.find(p => idProducto(p).trim().toLowerCase() === idNormalizado);
+}
+
+// Al entrar con un link que tiene ?categoria= y/o ?p=, deja la página
+// mostrando ese filtro y/o esa ficha abierta.
+function aplicarLinkInicial() {
+  const params = new URLSearchParams(location.search);
+  const categoria = params.get("categoria");
+  const idProductoBuscado = params.get("p");
+
+  if (categoria) {
+    const categorias = ["Todos", ...new Set(PRODUCTOS.map(p => p.categoria))];
+    const coincidencia = categorias.find(c => c.toLowerCase() === categoria.trim().toLowerCase());
+    if (coincidencia) {
+      categoriaActual = coincidencia;
+      renderCategories();
+      renderProducts();
+    }
+  }
+
+  if (idProductoBuscado) {
+    const producto = buscarProductoPorId(idProductoBuscado);
+    if (producto) abrirFicha(producto);
+  }
+}
+
 function whatsappLink(producto) {
   const mensaje = producto.sinStock
     ? `Hola Sanitarios PCH, quiero consultar cuándo van a tener nuevo stock de: ${producto.nombre}`
@@ -209,6 +261,7 @@ function irACategoria(categoria) {
   renderCategories();
   renderProducts();
   cerrarDrawer();
+  actualizarURL({ categoria: categoria !== "Todos" ? categoria : null });
   document.getElementById("productos").scrollIntoView({ behavior: "smooth" });
 }
 
@@ -313,10 +366,12 @@ function renderDestacados() {
 let productosVisibles = [];
 let fichaFotos = [];
 let fichaIndice = 0;
+let fichaProductoActual = null;
 
 function abrirFicha(p) {
   fichaFotos = p.fotos;
   fichaIndice = 0;
+  fichaProductoActual = p;
 
   document.getElementById("modalCategoria").textContent = p.categoria;
   document.getElementById("modalNombre").textContent = p.nombre;
@@ -355,6 +410,7 @@ function abrirFicha(p) {
 
   document.getElementById("productModal").hidden = false;
   document.body.style.overflow = "hidden";
+  actualizarURL({ categoria: categoriaActual !== "Todos" ? categoriaActual : null, p: idProducto(p) });
 }
 
 function renderFichaFoto() {
@@ -377,10 +433,44 @@ function fichaAnterior() {
 function cerrarFicha() {
   document.getElementById("productModal").hidden = true;
   document.body.style.overflow = "";
+  fichaProductoActual = null;
+  actualizarURL({ categoria: categoriaActual !== "Todos" ? categoriaActual : null });
+}
+
+// Comparte el link directo al producto que está abierto en la ficha: en el
+// celular abre el menú nativo para mandarlo por WhatsApp; si el navegador no
+// lo soporta, copia el link para pegarlo donde haga falta.
+async function compartirProducto() {
+  if (!fichaProductoActual) return;
+  const url = linkProducto(fichaProductoActual);
+  const shareBtn = document.getElementById("modalShare");
+
+  if (navigator.share) {
+    try {
+      await navigator.share({ title: fichaProductoActual.nombre, url });
+    } catch {
+      // El visitante canceló el menú de compartir; no hace falta avisar nada.
+    }
+    return;
+  }
+
+  try {
+    await navigator.clipboard.writeText(url);
+    const textoOriginal = shareBtn.title;
+    shareBtn.title = "¡Link copiado!";
+    shareBtn.classList.add("share-btn--copiado");
+    setTimeout(() => {
+      shareBtn.title = textoOriginal;
+      shareBtn.classList.remove("share-btn--copiado");
+    }, 2000);
+  } catch {
+    window.prompt("Copiá este link para compartirlo:", url);
+  }
 }
 
 document.getElementById("modalClose").addEventListener("click", cerrarFicha);
 document.getElementById("modalOverlay").addEventListener("click", cerrarFicha);
+document.getElementById("modalShare").addEventListener("click", compartirProducto);
 document.getElementById("modalNext").addEventListener("click", fichaSiguiente);
 document.getElementById("modalPrev").addEventListener("click", fichaAnterior);
 document.addEventListener("keydown", (e) => {
